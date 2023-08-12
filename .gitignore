@@ -37,3 +37,5 @@ out/
 .vscode/
 .DS_Store
 application.yml
+application-jwt.yml
+application-aws.yml
