@@ -1,6 +1,6 @@
 package com.finder.jwt.handler;
 
-import com.finder.jwt.JwtService;
+import com.finder.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

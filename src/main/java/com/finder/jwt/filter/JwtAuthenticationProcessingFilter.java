@@ -1,7 +1,7 @@
 package com.finder.jwt.filter;
 
 import com.finder.domain.User;
-import com.finder.jwt.JwtService;
+import com.finder.jwt.service.JwtService;
 import com.finder.jwt.PasswordUtil;
 import com.finder.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

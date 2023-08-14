@@ -1,8 +1,8 @@
 package com.finder.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finder.jwt.JwtService;
-import com.finder.jwt.LoginService;
+import com.finder.jwt.service.JwtService;
+import com.finder.jwt.service.LoginService;
 import com.finder.jwt.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import com.finder.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.finder.jwt.handler.LoginFailureHandler;

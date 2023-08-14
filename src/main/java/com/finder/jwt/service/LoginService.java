@@ -1,4 +1,4 @@
-package com.finder.jwt;
+package com.finder.jwt.service;
 
 import com.finder.domain.User;
 import com.finder.repository.UserRepository;
