@@ -1,24 +1,12 @@
-package com.finder.domain;
+package com.finder.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import javax.persistence.*;
+import com.finder.domain.User;
+import lombok.Data;
 
-@Entity
-@Table(name = "QUESTIONNAIRE")
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-public class Questionnaire {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class QuestionnaireDto {
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
     private User user;
 
     private String name;
