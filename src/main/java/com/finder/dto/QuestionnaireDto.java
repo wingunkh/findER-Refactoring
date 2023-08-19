@@ -7,7 +7,7 @@ import lombok.Data;
 public class QuestionnaireDto {
     private Long id;
 
-    private User user;
+    // private User user;
 
     private String name;
 

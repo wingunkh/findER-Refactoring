@@ -3,6 +3,7 @@ package com.finder.service;
 import com.finder.domain.Questionnaire;
 import com.finder.dto.QuestionnaireDto;
 import com.finder.repository.QuestionnaireRepository;
+import com.finder.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,12 @@ import org.springframework.stereotype.Service;
 public class QuestionnaireService {
     private final QuestionnaireRepository questionnaireRepository;
 
-    public String writeQuestionnaire(QuestionnaireDto questionnaireDto) {
+    private final UserRepository userRepository;
+
+    public String writeQuestionnaire(QuestionnaireDto questionnaireDto, String email) {
         Questionnaire questionnaire = Questionnaire.builder()
                 .id(questionnaireDto.getId())
-                .user(questionnaireDto.getUser())
+                .user(userRepository.findByEmail(email).get())
                 .age(questionnaireDto.getAge())
                 .familyRelations(questionnaireDto.getFamilyRelations())
                 .phoneNum(questionnaireDto.getPhoneNum())
