@@ -1,9 +1,10 @@
 package com.finder.dto;
 
-import com.finder.domain.User;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class QuestionnaireDto {
     private Long id;
 
