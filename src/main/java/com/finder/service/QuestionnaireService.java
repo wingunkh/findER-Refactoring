@@ -23,6 +23,7 @@ public class QuestionnaireService {
         Questionnaire questionnaire = Questionnaire.builder()
                 .id(questionnaireDto.getId())
                 .user(userRepository.findByEmail(email).get())
+                .name(questionnaireDto.getName())
                 .age(questionnaireDto.getAge())
                 .familyRelations(questionnaireDto.getFamilyRelations())
                 .phoneNum(questionnaireDto.getPhoneNum())
@@ -48,6 +49,8 @@ public class QuestionnaireService {
         for (Questionnaire questionnaire : questionnaireList) {
             QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
                     .id(questionnaire.getId())
+                    .user(questionnaire.getUser())
+                    .name(questionnaire.getName())
                     .age(questionnaire.getAge())
                     .familyRelations(questionnaire.getFamilyRelations())
                     .phoneNum(questionnaire.getPhoneNum())
@@ -71,6 +74,8 @@ public class QuestionnaireService {
         Questionnaire questionnaire = questionnaireRepository.findById(id).get();
         QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
                 .id(questionnaire.getId())
+                .user(questionnaire.getUser())
+                .name(questionnaire.getName())
                 .age(questionnaire.getAge())
                 .familyRelations(questionnaire.getFamilyRelations())
                 .phoneNum(questionnaire.getPhoneNum())
@@ -85,5 +90,49 @@ public class QuestionnaireService {
                 .build();
 
         return questionnaireDto;
+    }
+
+    public String updateQuestionnaire(Long id, QuestionnaireDto updatedQuestionnaireDto) {
+        Questionnaire questionnaire = questionnaireRepository.findById(id).get();
+
+        if (updatedQuestionnaireDto.getName() != null)
+            questionnaire.setName(updatedQuestionnaireDto.getName());
+
+        if (updatedQuestionnaireDto.getAge() != null)
+            questionnaire.setAge(updatedQuestionnaireDto.getAge());
+
+        if (updatedQuestionnaireDto.getFamilyRelations() != null)
+            questionnaire.setFamilyRelations(updatedQuestionnaireDto.getFamilyRelations());
+
+        if (updatedQuestionnaireDto.getPhoneNum() != null)
+            questionnaire.setPhoneNum(updatedQuestionnaireDto.getPhoneNum());
+
+        if (updatedQuestionnaireDto.getAddress() != null)
+            questionnaire.setAddress(updatedQuestionnaireDto.getAddress());
+
+        if (updatedQuestionnaireDto.getGender() != null)
+            questionnaire.setGender(updatedQuestionnaireDto.getGender());
+
+        if (updatedQuestionnaireDto.getBloodType() != null)
+            questionnaire.setBloodType(updatedQuestionnaireDto.getBloodType());
+
+        if (updatedQuestionnaireDto.getAllergy() != null)
+            questionnaire.setAllergy(updatedQuestionnaireDto.getAllergy());
+
+        if (updatedQuestionnaireDto.getMedicine() != null)
+            questionnaire.setMedicine(updatedQuestionnaireDto.getMedicine());
+
+        if (updatedQuestionnaireDto.getSmokingCycle() != null)
+            questionnaire.setSmokingCycle(updatedQuestionnaireDto.getSmokingCycle());
+
+        if (updatedQuestionnaireDto.getDrinkingCycle() != null)
+            questionnaire.setDrinkingCycle(updatedQuestionnaireDto.getDrinkingCycle());
+
+        if (updatedQuestionnaireDto.getEtc() != null)
+            questionnaire.setEtc(updatedQuestionnaireDto.getEtc());
+
+        questionnaireRepository.save(questionnaire);
+
+        return "문진표 수정 완료";
     }
 }

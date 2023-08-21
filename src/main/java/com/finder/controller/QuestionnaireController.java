@@ -32,4 +32,10 @@ public class QuestionnaireController {
     public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable Long id) {
         return ResponseEntity.ok(questionnaireService.getQuestionnaire(id));
     }
+
+    // 문진표 수정
+    @PatchMapping("/{id}")
+    public ResponseEntity updateQuestionnaire( @PathVariable Long id, @RequestBody QuestionnaireDto updatedQuestionnaireDto) {
+        return ResponseEntity.ok(questionnaireService.updateQuestionnaire(id, updatedQuestionnaireDto));
+    }
 }
