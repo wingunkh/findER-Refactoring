@@ -35,7 +35,13 @@ public class QuestionnaireController {
 
     // 문진표 수정
     @PatchMapping("/{id}")
-    public ResponseEntity updateQuestionnaire( @PathVariable Long id, @RequestBody QuestionnaireDto updatedQuestionnaireDto) {
+    public ResponseEntity updateQuestionnaire(@PathVariable Long id, @RequestBody QuestionnaireDto updatedQuestionnaireDto) {
         return ResponseEntity.ok(questionnaireService.updateQuestionnaire(id, updatedQuestionnaireDto));
+    }
+
+    // 문진표 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteQuestionnaire(@PathVariable Long id) {
+        return ResponseEntity.ok(questionnaireService.deleteQuestionnaire(id));
     }
 }

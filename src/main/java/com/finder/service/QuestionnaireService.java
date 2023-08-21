@@ -92,6 +92,7 @@ public class QuestionnaireService {
         return questionnaireDto;
     }
 
+    @Transactional
     public String updateQuestionnaire(Long id, QuestionnaireDto updatedQuestionnaireDto) {
         Questionnaire questionnaire = questionnaireRepository.findById(id).get();
 
@@ -134,5 +135,12 @@ public class QuestionnaireService {
         questionnaireRepository.save(questionnaire);
 
         return "문진표 수정 완료";
+    }
+
+    @Transactional
+    public String deleteQuestionnaire(Long id) {
+        questionnaireRepository.delete(questionnaireRepository.findById(id).get());
+
+        return "문진표 삭제 완료";
     }
 }
