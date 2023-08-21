@@ -36,7 +36,7 @@ public class HospitalService {
         // 거리, 도착 예정 시간 조회
         Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, hospital.getLatitude(), hospital.getLongitude());
 
-        HospitalPreviewDto hospitalPreviewDto = new HospitalPreviewDto(hospital.getName(), hospital.getAddress(), hospital.getRepresentativeContact(), hospital.getEmergencyContact(),
+        HospitalPreviewDto hospitalPreviewDto = new HospitalPreviewDto(hospital.getId(), hospital.getName(), hospital.getAddress(), hospital.getRepresentativeContact(), hospital.getEmergencyContact(),
                 null, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
 
         return hospitalPreviewDto;
@@ -59,7 +59,7 @@ public class HospitalService {
         List<HospitalPreviewDto> hospitalPreviewDtos = nearbyHospitals.stream()
                 .map(nearbyHospital ->  {
                     Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, nearbyHospital.getLatitude(), nearbyHospital.getLongitude());
-                    return new HospitalPreviewDto(nearbyHospital.getName(), nearbyHospital.getAddress(), nearbyHospital.getRepresentativeContact(),
+                    return new HospitalPreviewDto(nearbyHospital.getId(), nearbyHospital.getName(), nearbyHospital.getAddress(), nearbyHospital.getRepresentativeContact(),
                             nearbyHospital.getEmergencyContact(), null, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
                 }).collect(Collectors.toList());
 
