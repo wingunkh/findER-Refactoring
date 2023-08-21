@@ -11,6 +11,6 @@ public class HospitalPreviewDto {
     private String representativeContact;
     private String emergencyContact;
     private Integer hvec;
-    private String distance;
+    private Double distance;
     private String arrivalTime;
 }

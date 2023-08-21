@@ -27,4 +27,10 @@ public class HospitalController {
     public ResponseEntity<HospitalPreviewDto> findHospitalPreview(@PathVariable Long id, @RequestParam Double lat, @RequestParam Double lon) {
         return ResponseEntity.ok(hospitalService.findHospitalPreview(id, lat, lon));
     }
+
+    //병원 목록 조회
+    @GetMapping("/list")
+    public ResponseEntity findHospitalList(@RequestParam Double lat, @RequestParam Double lon) {
+        return ResponseEntity.ok(hospitalService.findHospitalList(lat, lon));
+    }
 }

@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,8 +37,54 @@ public class HospitalService {
         Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, hospital.getLatitude(), hospital.getLongitude());
 
         HospitalPreviewDto hospitalPreviewDto = new HospitalPreviewDto(hospital.getName(), hospital.getAddress(), hospital.getRepresentativeContact(), hospital.getEmergencyContact(),
-                null, map.get("distance"), map.get("arriveTime"));
+                null, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
 
         return hospitalPreviewDto;
+    }
+
+    public List<HospitalPreviewDto> findHospitalList(Double lat, Double lon) {
+        List<Hospital> hospitals = hospitalRepository.findAll();
+        List<Hospital> nearbyHospitals = new ArrayList<>();
+        for (Hospital h : hospitals) {
+            Double findLat = h.getLatitude();
+            Double findLon = h.getLongitude();
+            if(findLat != null && findLon != null) {
+                double distance = getDistance(lat, lon, findLat, findLon);
+                //반경 5km이내 병원
+                if(distance/1000 <= 5) nearbyHospitals.add(h);
+            }
+        }
+
+        // 거리, 도착 예정 시간 조회
+        List<HospitalPreviewDto> hospitalPreviewDtos = nearbyHospitals.stream()
+                .map(nearbyHospital ->  {
+                    Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, nearbyHospital.getLatitude(), nearbyHospital.getLongitude());
+                    return new HospitalPreviewDto(nearbyHospital.getName(), nearbyHospital.getAddress(), nearbyHospital.getRepresentativeContact(),
+                            nearbyHospital.getEmergencyContact(), null, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
+                }).collect(Collectors.toList());
+
+        // 거리 순 내림차순 정렬
+        Collections.sort(hospitalPreviewDtos, new Comparator<HospitalPreviewDto>() {
+            @Override
+            public int compare(HospitalPreviewDto o1, HospitalPreviewDto o2) {
+                if(o1.getDistance() - o2.getDistance() < 0) return -1;
+                else if(o1.getDistance() - o2.getDistance() == 0) return 0;
+                else return 1;
+            }
+        });
+
+        return hospitalPreviewDtos;
+    }
+
+    // 직선 거리 계산
+    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        double earthRadius = 6371.;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = earthRadius * c * 1000;
+        return d;
     }
 }
