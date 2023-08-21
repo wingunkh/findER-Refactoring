@@ -1,7 +1,6 @@
 package com.finder.controller;
 
 import com.finder.dto.HospitalPreviewDto;
-import com.finder.dto.MapRequestDto;
 import com.finder.dto.MapResponseDto;
 import com.finder.service.HospitalService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,9 @@ public class HospitalController {
 
     //지도에 보여지는 부분에 대한 병원 정보 반환
     @GetMapping("/map")
-    public ResponseEntity<List<MapResponseDto>> findHospitalMap(@RequestBody MapRequestDto mapRequestDto) {
-        return ResponseEntity.ok(hospitalService.findHospitalMap(mapRequestDto));
+    public ResponseEntity<List<MapResponseDto>> findHospitalMap(@RequestParam Double swLat, @RequestParam Double swLon,
+                                                                @RequestParam Double neLat, @RequestParam Double neLon) {
+        return ResponseEntity.ok(hospitalService.findHospitalMap(swLat, swLon, neLat, neLon));
     }
 
     //병원 미리보기
