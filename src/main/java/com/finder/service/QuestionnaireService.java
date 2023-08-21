@@ -66,4 +66,24 @@ public class QuestionnaireService {
 
         return questionnaireDtoList;
     }
+
+    public QuestionnaireDto getQuestionnaire(Long id) {
+        Questionnaire questionnaire = questionnaireRepository.findById(id).get();
+        QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
+                .id(questionnaire.getId())
+                .age(questionnaire.getAge())
+                .familyRelations(questionnaire.getFamilyRelations())
+                .phoneNum(questionnaire.getPhoneNum())
+                .address(questionnaire.getAddress())
+                .gender(questionnaire.getGender())
+                .bloodType(questionnaire.getBloodType())
+                .allergy(questionnaire.getAllergy())
+                .medicine(questionnaire.getMedicine())
+                .smokingCycle(questionnaire.getSmokingCycle())
+                .drinkingCycle(questionnaire.getDrinkingCycle())
+                .etc(questionnaire.getEtc())
+                .build();
+
+        return questionnaireDto;
+    }
 }

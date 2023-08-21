@@ -26,4 +26,10 @@ public class QuestionnaireController {
     public ResponseEntity<List<QuestionnaireDto>> getAllQuestionnaires(@AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.getAllQuestionnaires(userDetail.getUsername()));
     }
+
+    // 문진표 상세 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable Long id) {
+        return ResponseEntity.ok(questionnaireService.getQuestionnaire(id));
+    }
 }
