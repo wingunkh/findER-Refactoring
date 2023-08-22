@@ -96,41 +96,29 @@ public class QuestionnaireService {
     public String updateQuestionnaire(Long id, QuestionnaireDto updatedQuestionnaireDto) {
         Questionnaire questionnaire = questionnaireRepository.findById(id).get();
 
-        if (updatedQuestionnaireDto.getName() != null)
-            questionnaire.setName(updatedQuestionnaireDto.getName());
+        questionnaire.setName(updatedQuestionnaireDto.getName());
 
-        if (updatedQuestionnaireDto.getAge() != null)
-            questionnaire.setAge(updatedQuestionnaireDto.getAge());
+        questionnaire.setAge(updatedQuestionnaireDto.getAge());
 
-        if (updatedQuestionnaireDto.getFamilyRelations() != null)
-            questionnaire.setFamilyRelations(updatedQuestionnaireDto.getFamilyRelations());
+        questionnaire.setFamilyRelations(updatedQuestionnaireDto.getFamilyRelations());
 
-        if (updatedQuestionnaireDto.getPhoneNum() != null)
-            questionnaire.setPhoneNum(updatedQuestionnaireDto.getPhoneNum());
+        questionnaire.setPhoneNum(updatedQuestionnaireDto.getPhoneNum());
 
-        if (updatedQuestionnaireDto.getAddress() != null)
-            questionnaire.setAddress(updatedQuestionnaireDto.getAddress());
+        questionnaire.setAddress(updatedQuestionnaireDto.getAddress());
 
-        if (updatedQuestionnaireDto.getGender() != null)
-            questionnaire.setGender(updatedQuestionnaireDto.getGender());
+        questionnaire.setGender(updatedQuestionnaireDto.getGender());
 
-        if (updatedQuestionnaireDto.getBloodType() != null)
-            questionnaire.setBloodType(updatedQuestionnaireDto.getBloodType());
+        questionnaire.setBloodType(updatedQuestionnaireDto.getBloodType());
 
-        if (updatedQuestionnaireDto.getAllergy() != null)
-            questionnaire.setAllergy(updatedQuestionnaireDto.getAllergy());
+        questionnaire.setAllergy(updatedQuestionnaireDto.getAllergy());
 
-        if (updatedQuestionnaireDto.getMedicine() != null)
-            questionnaire.setMedicine(updatedQuestionnaireDto.getMedicine());
+        questionnaire.setMedicine(updatedQuestionnaireDto.getMedicine());
 
-        if (updatedQuestionnaireDto.getSmokingCycle() != null)
-            questionnaire.setSmokingCycle(updatedQuestionnaireDto.getSmokingCycle());
+        questionnaire.setSmokingCycle(updatedQuestionnaireDto.getSmokingCycle());
 
-        if (updatedQuestionnaireDto.getDrinkingCycle() != null)
-            questionnaire.setDrinkingCycle(updatedQuestionnaireDto.getDrinkingCycle());
+        questionnaire.setDrinkingCycle(updatedQuestionnaireDto.getDrinkingCycle());
 
-        if (updatedQuestionnaireDto.getEtc() != null)
-            questionnaire.setEtc(updatedQuestionnaireDto.getEtc());
+        questionnaire.setEtc(updatedQuestionnaireDto.getEtc());
 
         questionnaireRepository.save(questionnaire);
 
