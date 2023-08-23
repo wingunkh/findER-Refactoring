@@ -120,7 +120,9 @@ public class QuestionnaireService {
 
         questionnaire.setEtc(updatedQuestionnaireDto.getEtc());
 
-        questionnaireRepository.save(questionnaire);
+        // questionnaireRepository.save(questionnaire);
+        // 영속성 컨텍스트의 Dirty Checking 기능을 통해 변경된 엔티티의 상태가 감지된다.
+        // 그 후 트랜잭션 커밋 시 해당 변경 사항이 데이터베이스에 반영되어 업데이트가 자동으로 수행된다.
 
         return "문진표 수정 완료";
     }
