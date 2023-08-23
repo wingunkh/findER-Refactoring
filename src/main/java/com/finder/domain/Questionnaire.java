@@ -4,7 +4,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "QUESTIONNAIRE")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -49,7 +49,7 @@ public class QuestionnaireService {
         for (Questionnaire questionnaire : questionnaireList) {
             QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
                     .id(questionnaire.getId())
-                    .uid(questionnaire.getUser().getId())
+                    .userId(questionnaire.getUser().getId())
                     .name(questionnaire.getName())
                     .age(questionnaire.getAge())
                     .familyRelations(questionnaire.getFamilyRelations())
@@ -74,7 +74,7 @@ public class QuestionnaireService {
         Questionnaire questionnaire = questionnaireRepository.findById(id).get();
         QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
                 .id(questionnaire.getId())
-                .uid(questionnaire.getUser().getId())
+                .userId(questionnaire.getUser().getId())
                 .name(questionnaire.getName())
                 .age(questionnaire.getAge())
                 .familyRelations(questionnaire.getFamilyRelations())
