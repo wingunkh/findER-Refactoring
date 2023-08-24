@@ -34,5 +34,5 @@ public class QuestionnaireDto {
 
     private String etc;
 
-    private Boolean isLinked = Boolean.FALSE; // Boolean 객체는 기본적으로 false로 초기화
+    private Boolean isLinked;
 }

@@ -1,7 +1,9 @@
 package com.finder.service;
 
+import com.finder.domain.Link;
 import com.finder.domain.Questionnaire;
 import com.finder.dto.QuestionnaireDto;
+import com.finder.repository.LinkRepository;
 import com.finder.repository.QuestionnaireRepository;
 import com.finder.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,11 @@ public class QuestionnaireService {
 
     private final UserRepository userRepository;
 
+    private final LinkRepository linkRepository;
+
     @Transactional
     public String writeQuestionnaire(QuestionnaireDto questionnaireDto, String email) {
         Questionnaire questionnaire = Questionnaire.builder()
-                // .id(questionnaireDto.getId())
                 .user(userRepository.findByEmail(email).get())
                 .name(questionnaireDto.getName())
                 .age(questionnaireDto.getAge())
@@ -42,11 +45,26 @@ public class QuestionnaireService {
         return "문진표 작성 완료";
     }
 
-    public List<QuestionnaireDto> getAllQuestionnaires(String email) {
-        List<QuestionnaireDto> questionnaireDtoList = new ArrayList<>();
-        List<Questionnaire> questionnaireList = questionnaireRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
+    @Transactional
+    public String linkQuestionnaire(String userEmail, String linkedUserEmail) {
+        Link link = Link.builder()
+                .user(userRepository.findByEmail(userEmail).get())
+                .linkedUserId(userRepository.findByEmail(linkedUserEmail).get().getId())
+                .build();
 
-        for (Questionnaire questionnaire : questionnaireList) {
+        linkRepository.save(link);
+
+        return "문진표 연동 완료";
+    }
+
+    public List<QuestionnaireDto> getAllQuestionnaires(String email) {
+        // 전체 문진표 리스트 = 자신의 문진표 리스트 + 연동 문진표 리스트
+        List<QuestionnaireDto> questionnaireDtoList = new ArrayList<>();
+
+        // 자신의 문진표 리스트
+        List<Questionnaire> myQuestionnaireList = questionnaireRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
+
+        for (Questionnaire questionnaire : myQuestionnaireList) {
             QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
                     .id(questionnaire.getId())
                     .userId(questionnaire.getUser().getId())
@@ -62,6 +80,39 @@ public class QuestionnaireService {
                     .smokingCycle(questionnaire.getSmokingCycle())
                     .drinkingCycle(questionnaire.getDrinkingCycle())
                     .etc(questionnaire.getEtc())
+                    .isLinked(Boolean.FALSE)
+                    .build();
+
+            questionnaireDtoList.add(questionnaireDto);
+        }
+
+        // 연동 정보 리스트
+        List<Link> linkList = linkRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
+
+        // 연동 문진표 리스트
+        List<Questionnaire> linkedQuestionnaireList = new ArrayList<>();
+
+        for (Link link : linkList) {
+            linkedQuestionnaireList.add(questionnaireRepository.findMyQuestionnaire(link.getLinkedUserId()).get());
+        }
+
+        for (Questionnaire questionnaire : linkedQuestionnaireList) {
+            QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
+                    .id(questionnaire.getId())
+                    .userId(questionnaire.getUser().getId())
+                    .name(questionnaire.getName())
+                    .age(questionnaire.getAge())
+                    .familyRelations(questionnaire.getFamilyRelations())
+                    .phoneNum(questionnaire.getPhoneNum())
+                    .address(questionnaire.getAddress())
+                    .gender(questionnaire.getGender())
+                    .bloodType(questionnaire.getBloodType())
+                    .allergy(questionnaire.getAllergy())
+                    .medicine(questionnaire.getMedicine())
+                    .smokingCycle(questionnaire.getSmokingCycle())
+                    .drinkingCycle(questionnaire.getDrinkingCycle())
+                    .etc(questionnaire.getEtc())
+                    .isLinked(Boolean.TRUE)
                     .build();
 
             questionnaireDtoList.add(questionnaireDto);

@@ -1,5 +1,6 @@
 package com.finder.controller;
 
+import com.finder.dto.LinkDto;
 import com.finder.dto.QuestionnaireDto;
 import com.finder.service.QuestionnaireService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,12 @@ public class QuestionnaireController {
     @PostMapping()
     public ResponseEntity writeQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto, @AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.writeQuestionnaire(questionnaireDto, userDetail.getUsername()));
+    }
+
+    // 문진표 연동(테스트)
+    @PostMapping("/link")
+    public ResponseEntity linkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
+        return ResponseEntity.ok(questionnaireService.linkQuestionnaire(userDetail.getUsername(), linkDto.getLinkedUserEmail()));
     }
 
     // 전체 문진표 리스트 조회

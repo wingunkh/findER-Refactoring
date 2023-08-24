@@ -41,6 +41,4 @@ public class Questionnaire {
     private String drinkingCycle;
 
     private String etc;
-
-    private Boolean isLinked;
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LinkDto {
-    private Long userId;
+    private String userEmail;
 
-    private Long linkedUserId;
+    private String linkedUserEmail;
 }
