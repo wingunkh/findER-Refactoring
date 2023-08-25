@@ -22,7 +22,7 @@ public class QuestionnaireController {
         return ResponseEntity.ok(questionnaireService.writeQuestionnaire(questionnaireDto, userDetail.getUsername()));
     }
 
-    // 문진표 연동(테스트)
+    // 문진표 연동
     @PostMapping("/link")
     public ResponseEntity linkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.linkQuestionnaire(userDetail.getUsername(), linkDto.getLinkedUserEmail()));

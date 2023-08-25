@@ -12,5 +12,5 @@ public interface QuestionnaireRepository extends JpaRepository<Questionnaire, Lo
     Optional<List<Questionnaire>> findAllByUser(User user);
 
     @Query(value = "select * from questionnaire where id = :id and family_relations = '본인'", nativeQuery = true)
-    Optional<Questionnaire> findMyQuestionnaire(Long id);
+    Optional<Questionnaire> findLinkedQuestionnaire(Long id);
 }

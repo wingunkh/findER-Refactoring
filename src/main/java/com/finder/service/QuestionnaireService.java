@@ -54,7 +54,7 @@ public class QuestionnaireService {
 
         linkRepository.save(link);
 
-        return "문진표 연동 완료";
+        return "문진표 연동 요청 완료";
     }
 
     public List<QuestionnaireDto> getAllQuestionnaires(String email) {
@@ -87,13 +87,18 @@ public class QuestionnaireService {
         }
 
         // 연동 정보 리스트
-        List<Link> linkList = linkRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
+        List<Link> myLinkList = linkRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
 
         // 연동 문진표 리스트
         List<Questionnaire> linkedQuestionnaireList = new ArrayList<>();
 
-        for (Link link : linkList) {
-            linkedQuestionnaireList.add(questionnaireRepository.findMyQuestionnaire(link.getLinkedUserId()).get());
+        for (Link link1 : myLinkList) {
+            List<Link> otherLinkList = linkRepository.findAllByUser(userRepository.findById(link1.getLinkedUserId()).get()).get();
+
+            for (Link link2 : otherLinkList) {
+                if (link1.getId() == link2.getLinkedUserId())
+                    linkedQuestionnaireList.add(questionnaireRepository.findLinkedQuestionnaire(link2.getLinkedUserId()).get());
+            }
         }
 
         for (Questionnaire questionnaire : linkedQuestionnaireList) {
