@@ -22,7 +22,7 @@ public class QuestionnaireController {
         return ResponseEntity.ok(questionnaireService.writeQuestionnaire(questionnaireDto, userDetail.getUsername()));
     }
 
-    // 문진표 연동
+    // 문진표 연동 요청
     @PostMapping("/link")
     public ResponseEntity linkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.linkQuestionnaire(userDetail.getUsername(), linkDto.getLinkedUserEmail()));
@@ -50,5 +50,11 @@ public class QuestionnaireController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteQuestionnaire(@PathVariable Long id) {
         return ResponseEntity.ok(questionnaireService.deleteQuestionnaire(id));
+    }
+
+    // 문진표 연동 취소
+    @DeleteMapping("/unlink")
+    public ResponseEntity unlinkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
+        return ResponseEntity.ok(questionnaireService.unlinkQuestionnaire(userDetail.getUsername(), linkDto.getLinkedUserEmail()));
     }
 }

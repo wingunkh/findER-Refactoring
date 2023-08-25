@@ -9,6 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "linkedUserId"}))
 public class Link {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

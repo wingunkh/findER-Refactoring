@@ -96,8 +96,8 @@ public class QuestionnaireService {
             List<Link> otherLinkList = linkRepository.findAllByUser(userRepository.findById(link1.getLinkedUserId()).get()).get();
 
             for (Link link2 : otherLinkList) {
-                if (link1.getId() == link2.getLinkedUserId())
-                    linkedQuestionnaireList.add(questionnaireRepository.findLinkedQuestionnaire(link2.getId()).get());
+                if (link1.getUser().getId() == link2.getLinkedUserId())
+                    linkedQuestionnaireList.add(questionnaireRepository.findLinkedQuestionnaire(link2.getUser().getId()).get());
             }
         }
 
@@ -188,5 +188,16 @@ public class QuestionnaireService {
         questionnaireRepository.delete(questionnaireRepository.findById(id).get());
 
         return "문진표 삭제 완료";
+    }
+
+    @Transactional
+    public String unlinkQuestionnaire(String userEmail, String linkedUserEmail) {
+        Long userId = userRepository.findByEmail(userEmail).get().getId();
+        Long linkedUserId = userRepository.findByEmail(linkedUserEmail).get().getId();
+
+        linkRepository.deleteById(userId, linkedUserId);
+        linkRepository.deleteById(linkedUserId, userId);
+
+        return "문진표 연동 취소 완료";
     }
 }
