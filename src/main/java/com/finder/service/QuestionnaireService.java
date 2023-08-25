@@ -97,7 +97,7 @@ public class QuestionnaireService {
 
             for (Link link2 : otherLinkList) {
                 if (link1.getId() == link2.getLinkedUserId())
-                    linkedQuestionnaireList.add(questionnaireRepository.findLinkedQuestionnaire(link2.getLinkedUserId()).get());
+                    linkedQuestionnaireList.add(questionnaireRepository.findLinkedQuestionnaire(link2.getId()).get());
             }
         }
 
