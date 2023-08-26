@@ -1,5 +1,6 @@
 package com.finder.dto;
 
+import com.finder.domain.Questionnaire;
 import lombok.Builder;
 import lombok.Data;
 
@@ -35,4 +36,24 @@ public class QuestionnaireDto {
     private String etc;
 
     private Boolean isLinked;
+
+    public static QuestionnaireDto converToQuestionnaireDto(Questionnaire questionnaire, Boolean isLinked) {
+        return QuestionnaireDto.builder()
+                .id(questionnaire.getId())
+                .userId(questionnaire.getUser().getId())
+                .name(questionnaire.getName())
+                .age(questionnaire.getAge())
+                .familyRelations(questionnaire.getFamilyRelations())
+                .phoneNum(questionnaire.getPhoneNum())
+                .address(questionnaire.getAddress())
+                .gender(questionnaire.getGender())
+                .bloodType(questionnaire.getBloodType())
+                .allergy(questionnaire.getAllergy())
+                .medicine(questionnaire.getMedicine())
+                .smokingCycle(questionnaire.getSmokingCycle())
+                .drinkingCycle(questionnaire.getDrinkingCycle())
+                .etc(questionnaire.getEtc())
+                .isLinked(isLinked)
+                .build();
+    }
 }

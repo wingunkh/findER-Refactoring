@@ -65,25 +65,7 @@ public class QuestionnaireService {
         List<Questionnaire> myQuestionnaireList = questionnaireRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
 
         for (Questionnaire questionnaire : myQuestionnaireList) {
-            QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
-                    .id(questionnaire.getId())
-                    .userId(questionnaire.getUser().getId())
-                    .name(questionnaire.getName())
-                    .age(questionnaire.getAge())
-                    .familyRelations(questionnaire.getFamilyRelations())
-                    .phoneNum(questionnaire.getPhoneNum())
-                    .address(questionnaire.getAddress())
-                    .gender(questionnaire.getGender())
-                    .bloodType(questionnaire.getBloodType())
-                    .allergy(questionnaire.getAllergy())
-                    .medicine(questionnaire.getMedicine())
-                    .smokingCycle(questionnaire.getSmokingCycle())
-                    .drinkingCycle(questionnaire.getDrinkingCycle())
-                    .etc(questionnaire.getEtc())
-                    .isLinked(Boolean.FALSE)
-                    .build();
-
-            questionnaireDtoList.add(questionnaireDto);
+            questionnaireDtoList.add(QuestionnaireDto.converToQuestionnaireDto(questionnaire, Boolean.FALSE));
         }
 
         // 연동 정보 리스트
@@ -102,50 +84,14 @@ public class QuestionnaireService {
         }
 
         for (Questionnaire questionnaire : linkedQuestionnaireList) {
-            QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
-                    .id(questionnaire.getId())
-                    .userId(questionnaire.getUser().getId())
-                    .name(questionnaire.getName())
-                    .age(questionnaire.getAge())
-                    .familyRelations(questionnaire.getFamilyRelations())
-                    .phoneNum(questionnaire.getPhoneNum())
-                    .address(questionnaire.getAddress())
-                    .gender(questionnaire.getGender())
-                    .bloodType(questionnaire.getBloodType())
-                    .allergy(questionnaire.getAllergy())
-                    .medicine(questionnaire.getMedicine())
-                    .smokingCycle(questionnaire.getSmokingCycle())
-                    .drinkingCycle(questionnaire.getDrinkingCycle())
-                    .etc(questionnaire.getEtc())
-                    .isLinked(Boolean.TRUE)
-                    .build();
-
-            questionnaireDtoList.add(questionnaireDto);
+            questionnaireDtoList.add(QuestionnaireDto.converToQuestionnaireDto(questionnaire, Boolean.TRUE));
         }
 
         return questionnaireDtoList;
     }
 
     public QuestionnaireDto getQuestionnaire(Long id) {
-        Questionnaire questionnaire = questionnaireRepository.findById(id).get();
-        QuestionnaireDto questionnaireDto = QuestionnaireDto.builder()
-                .id(questionnaire.getId())
-                .userId(questionnaire.getUser().getId())
-                .name(questionnaire.getName())
-                .age(questionnaire.getAge())
-                .familyRelations(questionnaire.getFamilyRelations())
-                .phoneNum(questionnaire.getPhoneNum())
-                .address(questionnaire.getAddress())
-                .gender(questionnaire.getGender())
-                .bloodType(questionnaire.getBloodType())
-                .allergy(questionnaire.getAllergy())
-                .medicine(questionnaire.getMedicine())
-                .smokingCycle(questionnaire.getSmokingCycle())
-                .drinkingCycle(questionnaire.getDrinkingCycle())
-                .etc(questionnaire.getEtc())
-                .build();
-
-        return questionnaireDto;
+        return QuestionnaireDto.converToQuestionnaireDto(questionnaireRepository.findById(id).get(), null);
     }
 
     @Transactional
