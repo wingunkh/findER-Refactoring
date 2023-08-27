@@ -2,6 +2,7 @@ package com.finder.service;
 
 import com.finder.domain.Link;
 import com.finder.domain.Questionnaire;
+import com.finder.dto.LinkDto;
 import com.finder.dto.QuestionnaireDto;
 import com.finder.repository.LinkRepository;
 import com.finder.repository.QuestionnaireRepository;
@@ -46,10 +47,11 @@ public class QuestionnaireService {
     }
 
     @Transactional
-    public String linkQuestionnaire(String userEmail, String linkedUserEmail) {
+    public String linkQuestionnaire(String userEmail, LinkDto linkDto) {
         Link link = Link.builder()
                 .user(userRepository.findByEmail(userEmail).get())
-                .linkedUserId(userRepository.findByEmail(linkedUserEmail).get().getId())
+                .linkedUserId(userRepository.findByEmail(linkDto.getLinkedUserEmail()).get().getId())
+                .familyRelations(linkDto.getFamilyRelations())
                 .build();
 
         linkRepository.save(link);
@@ -78,8 +80,12 @@ public class QuestionnaireService {
             List<Link> otherLinkList = linkRepository.findAllByUser(userRepository.findById(link1.getLinkedUserId()).get()).get();
 
             for (Link link2 : otherLinkList) {
-                if (link1.getUser().getId() == link2.getLinkedUserId())
-                    linkedQuestionnaireList.add(questionnaireRepository.findLinkedQuestionnaire(link2.getUser().getId()).get());
+                if (link1.getUser().getId() == link2.getLinkedUserId()){
+                    Questionnaire questionnaire = questionnaireRepository.findLinkedQuestionnaire(link2.getUser().getId()).get();
+                    questionnaire.setFamilyRelations(link1.getFamilyRelations());
+
+                    linkedQuestionnaireList.add(questionnaire);
+                }
             }
         }
 

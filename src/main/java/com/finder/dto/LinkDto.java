@@ -9,4 +9,6 @@ public class LinkDto {
     private String userEmail;
 
     private String linkedUserEmail;
+
+    private String familyRelations;
 }

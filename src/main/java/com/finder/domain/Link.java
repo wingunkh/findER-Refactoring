@@ -20,4 +20,6 @@ public class Link {
     private User user;
 
     private Long linkedUserId;
+
+    private String familyRelations;
 }

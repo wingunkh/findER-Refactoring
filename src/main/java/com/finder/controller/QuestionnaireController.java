@@ -25,7 +25,7 @@ public class QuestionnaireController {
     // 문진표 연동 요청
     @PostMapping("/link")
     public ResponseEntity linkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
-        return ResponseEntity.ok(questionnaireService.linkQuestionnaire(userDetail.getUsername(), linkDto.getLinkedUserEmail()));
+        return ResponseEntity.ok(questionnaireService.linkQuestionnaire(userDetail.getUsername(), linkDto));
     }
 
     // 전체 문진표 리스트 조회
