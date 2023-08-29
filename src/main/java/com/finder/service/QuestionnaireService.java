@@ -47,7 +47,7 @@ public class QuestionnaireService {
     }
 
     @Transactional
-    public String linkQuestionnaire(String userEmail, LinkDto linkDto) {
+    public String linkRequest(String userEmail, LinkDto linkDto) {
         Link link = Link.builder()
                 .user(userRepository.findByEmail(userEmail).get())
                 .linkedUserId(userRepository.findByEmail(linkDto.getLinkedUserEmail()).get().getId())
@@ -57,6 +57,32 @@ public class QuestionnaireService {
         linkRepository.save(link);
 
         return "문진표 연동 요청 완료";
+    }
+
+    @Transactional
+    public String waitLinkResponse(String userEmail, String linkedUserEmail) {
+        Long myId = userRepository.findByEmail(userEmail).get().getId();
+        Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
+
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + 3 * 60 * 1000;
+
+        while (System.currentTimeMillis() < endTime) {
+            if (linkRepository.findByAllId(myId, otherId).isEmpty()) {
+                return "문진표 연동 요청 취소 완료";
+            }
+
+            if (linkRepository.findByAllId(otherId, myId).isPresent()) {
+                return "문진표 연동 완료";
+            } try {
+                Thread.sleep(3000); // 3초 대기
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        linkRepository.deleteByAllId(myId, otherId);
+        return "문진표 연동 실패";
     }
 
     public List<QuestionnaireDto> getAllQuestionnaires(String email) {
@@ -144,11 +170,11 @@ public class QuestionnaireService {
 
     @Transactional
     public String unlinkQuestionnaire(String userEmail, String linkedUserEmail) {
-        Long userId = userRepository.findByEmail(userEmail).get().getId();
-        Long linkedUserId = userRepository.findByEmail(linkedUserEmail).get().getId();
+        Long myId = userRepository.findByEmail(userEmail).get().getId();
+        Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
 
-        linkRepository.deleteById(userId, linkedUserId);
-        linkRepository.deleteById(linkedUserId, userId);
+        linkRepository.deleteByAllId(myId, otherId);
+        linkRepository.deleteByAllId(otherId, myId);
 
         return "문진표 연동 취소 완료";
     }

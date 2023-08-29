@@ -11,7 +11,10 @@ import java.util.Optional;
 public interface LinkRepository extends JpaRepository<Link, Long> {
     Optional<List<Link>> findAllByUser(User user);
 
+    @Query(value = "select * from link where user_id = :userId and linked_user_id = :linkedUserId", nativeQuery = true)
+    Optional<Link> findByAllId(Long userId, Long linkedUserId);
+
     @Modifying
     @Query(value = "delete from link where user_id = :userId and linked_user_id = :linkedUserId", nativeQuery = true)
-    void deleteById(Long userId, Long linkedUserId);
+    void deleteByAllId(Long userId, Long linkedUserId);
 }

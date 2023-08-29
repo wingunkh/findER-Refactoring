@@ -24,8 +24,14 @@ public class QuestionnaireController {
 
     // 문진표 연동 요청
     @PostMapping("/link")
-    public ResponseEntity linkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
-        return ResponseEntity.ok(questionnaireService.linkQuestionnaire(userDetail.getUsername(), linkDto));
+    public ResponseEntity linkRequest(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
+        return ResponseEntity.ok(questionnaireService.linkRequest(userDetail.getUsername(), linkDto));
+    }
+
+    // 문진표 연동 응답 대기
+    @GetMapping("/link/{userEmail}/{linkedUserEmail}")
+    public ResponseEntity waitLinkResponse(@PathVariable String userEmail, @PathVariable String linkedUserEmail) {
+        return ResponseEntity.ok(questionnaireService.waitLinkResponse(userEmail, linkedUserEmail));
     }
 
     // 전체 문진표 리스트 조회
