@@ -120,7 +120,9 @@ public class BedService {
                 }
             }
         }
-        twoAgoList.add(twoAgoBeds.get(119).getCount());
+
+        if(twoAgoList.size() == 8) twoAgoList.add(twoAgoBeds.get(119).getCount());
+
         LocalDateTime time = twoAgoBeds.get(119).getTime();
         System.out.println("\n" + time.getHour() + ":" + time.getMinute());
 
