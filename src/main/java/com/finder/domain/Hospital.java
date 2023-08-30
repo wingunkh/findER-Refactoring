@@ -20,6 +20,8 @@ public class Hospital extends BaseEntity {
 
     private String address;
 
+    private String simpleAddress;
+
     private String representativeContact;
 
     private String emergencyContact;
