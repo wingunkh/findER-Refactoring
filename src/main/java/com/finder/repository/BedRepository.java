@@ -1,0 +1,38 @@
+package com.finder.repository;
+
+import com.finder.domain.Bed;
+import com.finder.idClass.BedId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface BedRepository extends JpaRepository<Bed, BedId> {
+
+    @Query("SELECT b FROM Bed b WHERE b.name = :name " +
+            "AND year(b.time) = year(:time) " +
+            "AND month(b.time) = month(:time) " +
+            "AND dayOfMonth(b.time) = dayOfMonth(:time) " +
+            "AND hour(b.time) = hour(:time) " +
+            "AND minute(b.time) = minute(:time)")
+    Bed findByNameAndTime(String name, LocalDateTime time);
+
+    @Query("select b " +
+            "from Bed b " +
+            "where b.name = :name and " +
+            "b.time between :beforeTime and :currentTime")
+    List<Bed> findByRecent(String name, LocalDateTime beforeTime, LocalDateTime currentTime);
+
+//    @Query("select b " +
+//            "from Bed b " +
+//            "where b.name = :name and " +
+//            "b.time between :beforeTime and :currentTime " +
+//            "and FUNCTION('MINUTE', b.time) IN (0, 15, 40, 45)")
+    @Query(value = "SELECT * " +
+        "FROM bed " +
+        "WHERE name = :name " +
+        "AND time BETWEEN :beforeTime AND :currentTime " +
+        "AND MOD(TIMESTAMPDIFF(MINUTE, :beforeTime, time), 15) = 0", nativeQuery = true)
+    List<Bed> findByNewRecent(String name, LocalDateTime beforeTime, LocalDateTime currentTime);
+}
