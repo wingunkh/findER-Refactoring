@@ -1,5 +1,6 @@
 package com.finder.controller;
 
+import com.finder.dto.HospitalDetailDto;
 import com.finder.dto.HospitalPreviewDto;
 import com.finder.dto.MapResponseDto;
 import com.finder.service.HospitalService;
@@ -32,5 +33,11 @@ public class HospitalController {
     @GetMapping("/list")
     public ResponseEntity findHospitalList(@RequestParam Double lat, @RequestParam Double lon) {
         return ResponseEntity.ok(hospitalService.findHospitalList(lat, lon));
+    }
+
+    //병원 상세 조회
+    @GetMapping("/details/{id}")
+    public ResponseEntity<HospitalDetailDto> findHospitalDetail(@PathVariable Long id, @RequestParam Double lat, @RequestParam Double lon) {
+        return ResponseEntity.ok(hospitalService.findHospitalDetail(id, lat, lon));
     }
 }

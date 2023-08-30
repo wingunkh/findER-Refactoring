@@ -1,6 +1,8 @@
 package com.finder.service;
 
 import com.finder.domain.Hospital;
+import com.finder.dto.BedDataDto;
+import com.finder.dto.HospitalDetailDto;
 import com.finder.dto.HospitalPreviewDto;
 import com.finder.dto.MapResponseDto;
 import com.finder.repository.HospitalRepository;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class HospitalService {
     private final HospitalRepository hospitalRepository;
     private final KakaoMobilityService kakaoMobilityService;
+    private final BedService bedService;
 
     public List<MapResponseDto> findHospitalMap(Double swLat, Double swLon, Double neLat, Double neLon) {
         List<Hospital> hospitals = hospitalRepository.findHospitalMap(swLat, swLon, neLat, neLon);
@@ -84,5 +87,34 @@ public class HospitalService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = earthRadius * c * 1000;
         return d;
+    }
+
+    public HospitalDetailDto findHospitalDetail(Long id, Double lat, Double lon) {
+        Hospital hospital = hospitalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("찾으시는 병원이 존재하지 않습니다."));
+        Boolean ambulance, ct, mri;
+
+        if(hospital.getAmbulance().equals("Y")) ambulance = true;
+        else ambulance = false;
+
+        if(hospital.getCt().equals("Y")) ct = true;
+        else ct = false;
+
+        if(hospital.getMri().equals("Y")) mri = true;
+        else mri = false;
+
+        // 거리, 도착 예정 시간 조회
+        Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, hospital.getLatitude(), hospital.getLongitude());
+
+        // 병상수, 병상 데이터 조회
+        BedDataDto bedDataDto = bedService.findByRecentV2(hospital.getName());
+        int hvec = bedDataDto.getTwoAgoList().get(8);
+
+        HospitalDetailDto hospitalDetailDto = new HospitalDetailDto(hospital.getName(), hospital.getAddress(), hospital.getSimpleAddress(),
+                hospital.getRepresentativeContact(), hospital.getEmergencyContact(), ambulance, ct, mri,
+                hvec, Double.parseDouble(map.get("distance")), map.get("arriveTime"), hospital.getLatitude(),
+                hospital.getLongitude(), bedDataDto);
+
+        return hospitalDetailDto;
     }
 }
