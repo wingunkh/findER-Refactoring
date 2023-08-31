@@ -30,8 +30,8 @@ public class QuestionnaireController {
 
     // 문진표 연동 응답 대기
     @GetMapping("/link")
-    public ResponseEntity waitLinkResponse(@RequestParam String userEmail, @RequestParam String linkedUserEmail) {
-        return ResponseEntity.ok(questionnaireService.waitLinkResponse(userEmail, linkedUserEmail));
+    public ResponseEntity waitLinkResponse(@RequestParam String linkedUserEmail, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(questionnaireService.waitLinkResponse(userDetails.getUsername(), linkedUserEmail));
     }
 
     // 전체 문진표 리스트 조회
