@@ -29,8 +29,8 @@ public class QuestionnaireController {
     }
 
     // 문진표 연동 응답 대기
-    @GetMapping("/link/{userEmail}/{linkedUserEmail}")
-    public ResponseEntity waitLinkResponse(@PathVariable String userEmail, @PathVariable String linkedUserEmail) {
+    @GetMapping("/link")
+    public ResponseEntity waitLinkResponse(@RequestParam String userEmail, @RequestParam String linkedUserEmail) {
         return ResponseEntity.ok(questionnaireService.waitLinkResponse(userEmail, linkedUserEmail));
     }
 
@@ -38,12 +38,6 @@ public class QuestionnaireController {
     @GetMapping()
     public ResponseEntity<List<QuestionnaireDto>> getAllQuestionnaires(@AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.getAllQuestionnaires(userDetail.getUsername()));
-    }
-
-    // 문진표 상세 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable Long id) {
-        return ResponseEntity.ok(questionnaireService.getQuestionnaire(id));
     }
 
     // 문진표 수정
@@ -59,8 +53,8 @@ public class QuestionnaireController {
     }
 
     // 문진표 연동 취소
-    @DeleteMapping("/unlink/{id}")
-    public ResponseEntity unlinkQuestionnaire(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetail) {
+    @DeleteMapping("/unlink")
+    public ResponseEntity unlinkQuestionnaire(@RequestParam Long id, @AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.unlinkQuestionnaire(userDetail.getUsername(), id));
     }
 }
