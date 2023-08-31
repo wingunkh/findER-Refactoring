@@ -13,12 +13,11 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "USERS")
-public class User extends BaseEntity{
+public class Users extends BaseEntity{
     @Id
     // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "USER_SEQUENCE_GENERATOR")
-    @SequenceGenerator(name = "USER_SEQUENCE_GENERATOR", sequenceName = "USER_SQ", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "USERS_SEQUENCE_GENERATOR")
+    @SequenceGenerator(name = "USERS_SEQUENCE_GENERATOR", sequenceName = "USERS_SQ", initialValue = 1, allocationSize = 1)
     private Long id;
 
     private String email;

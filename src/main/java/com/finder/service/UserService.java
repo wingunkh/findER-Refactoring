@@ -1,7 +1,7 @@
 package com.finder.service;
 
 import com.finder.domain.Role;
-import com.finder.domain.User;
+import com.finder.domain.Users;
 import com.finder.dto.SignUpDto;
 import com.finder.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class UserService {
 
     @Transactional
     public String createUser(SignUpDto signUpDto) {
-        User user = User.builder()
+        Users user = Users.builder()
                 .email(signUpDto.getEmail())
                 .password(signUpDto.getPassword())
                 .name(signUpDto.getName())

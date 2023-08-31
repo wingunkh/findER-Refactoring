@@ -1,6 +1,6 @@
 package com.finder.jwt.filter;
 
-import com.finder.domain.User;
+import com.finder.domain.Users;
 import com.finder.jwt.service.JwtService;
 import com.finder.jwt.PasswordUtil;
 import com.finder.repository.UserRepository;
@@ -67,7 +67,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     // RefreshToken 재발급 & DB RefreshToken 업데이트
-    private String reIssueRT(User user) {
+    private String reIssueRT(Users user) {
         String newRefreshToken = jwtService.createRefreshToken();
         user.updateRefreshToken(newRefreshToken);
         userRepository.saveAndFlush(user);
@@ -102,7 +102,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     // 인증 허가
-    public void saveAuthentication(User myUser) {
+    public void saveAuthentication(Users myUser) {
         String password = myUser.getPassword();
         if (password == null) { // 소셜 로그인 유저의 비밀번호 임의로 설정 하여 소셜 로그인 유저도 인증 되도록 설정
             password = PasswordUtil.generateRandomPassword();

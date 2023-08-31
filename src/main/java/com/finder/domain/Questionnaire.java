@@ -18,7 +18,7 @@ public class Questionnaire {
 
     @ManyToOne
     @JoinColumn(name = "USER_ID")
-    private User user;
+    private Users user;
 
     private String name;
 
