@@ -59,8 +59,8 @@ public class QuestionnaireController {
     }
 
     // 문진표 연동 취소
-    @DeleteMapping("/unlink")
-    public ResponseEntity unlinkQuestionnaire(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
-        return ResponseEntity.ok(questionnaireService.unlinkQuestionnaire(userDetail.getUsername(), linkDto.getLinkedUserEmail()));
+    @DeleteMapping("/unlink/{id}")
+    public ResponseEntity unlinkQuestionnaire(@PathVariable Long linkedUserId, @AuthenticationPrincipal UserDetails userDetail) {
+        return ResponseEntity.ok(questionnaireService.unlinkQuestionnaire(userDetail.getUsername(), linkedUserId));
     }
 }

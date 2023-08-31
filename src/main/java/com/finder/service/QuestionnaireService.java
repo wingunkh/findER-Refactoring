@@ -169,9 +169,9 @@ public class QuestionnaireService {
     }
 
     @Transactional
-    public String unlinkQuestionnaire(String userEmail, String linkedUserEmail) {
+    public String unlinkQuestionnaire(String userEmail, Long linkedUserId) {
         Long myId = userRepository.findByEmail(userEmail).get().getId();
-        Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
+        Long otherId = linkedUserId;
 
         linkRepository.deleteByAllId(myId, otherId);
         linkRepository.deleteByAllId(otherId, myId);
