@@ -37,8 +37,12 @@ public class HospitalService {
         // 거리, 도착 예정 시간 조회
         Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, hospital.getLatitude(), hospital.getLongitude());
 
+        // 병상수 조회
+        Integer hvec = bedService.findByNameAndTime(hospital.getName());
+        if(hvec == null || hvec < 0) hvec = 0;
+
         HospitalPreviewDto hospitalPreviewDto = new HospitalPreviewDto(hospital.getId(), hospital.getName(), hospital.getAddress(), hospital.getRepresentativeContact(), hospital.getEmergencyContact(),
-                null, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
+                hvec, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
 
         return hospitalPreviewDto;
     }
@@ -60,8 +64,11 @@ public class HospitalService {
         List<HospitalPreviewDto> hospitalPreviewDtos = nearbyHospitals.stream()
                 .map(nearbyHospital ->  {
                     Map<String, String> map = kakaoMobilityService.requestKakaoMobilityApi(lat, lon, nearbyHospital.getLatitude(), nearbyHospital.getLongitude());
+                    // 병상수 조회
+                    Integer hvec = bedService.findByNameAndTime(nearbyHospital.getName());
+                    if(hvec == null || hvec < 0) hvec = 0;
                     return new HospitalPreviewDto(nearbyHospital.getId(), nearbyHospital.getName(), nearbyHospital.getAddress(), nearbyHospital.getRepresentativeContact(),
-                            nearbyHospital.getEmergencyContact(), null, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
+                            nearbyHospital.getEmergencyContact(), hvec, Double.parseDouble(map.get("distance")), map.get("arriveTime"));
                 }).collect(Collectors.toList());
 
         // 거리 순 내림차순 정렬

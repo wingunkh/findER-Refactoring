@@ -17,10 +17,12 @@ import java.util.List;
 public class BedService {
     private final BedRepository bedRepository;
 
-    public int findByNameAndTime(String name) {
+    public Integer findByNameAndTime(String name) {
         LocalDateTime now = LocalDateTime.now().minusMinutes(1);
         Bed bed = bedRepository.findByNameAndTime(name, now);
         System.out.println(now.getHour() + ":" + now.getMinute());
+
+        if(bed == null) return null; // 나중에 삭제
         return bed.getCount();
     }
 
