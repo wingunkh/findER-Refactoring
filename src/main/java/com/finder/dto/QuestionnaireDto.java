@@ -9,7 +9,7 @@ import lombok.Data;
 public class QuestionnaireDto {
     private Long id;
 
-    private Long userId;
+    private String email;
 
     private String name;
 
@@ -37,10 +37,10 @@ public class QuestionnaireDto {
 
     private Boolean isLinked;
 
-    public static QuestionnaireDto converToQuestionnaireDto(Questionnaire questionnaire, Boolean isLinked) {
+    public static QuestionnaireDto convertToQuestionnaireDto(Questionnaire questionnaire, Boolean isLinked) {
         return QuestionnaireDto.builder()
                 .id(questionnaire.getId())
-                .userId(questionnaire.getUser().getId())
+                .email(questionnaire.getUser().getEmail())
                 .name(questionnaire.getName())
                 .age(questionnaire.getAge())
                 .familyRelations(questionnaire.getFamilyRelations())

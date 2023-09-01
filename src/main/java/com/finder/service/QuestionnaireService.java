@@ -93,7 +93,7 @@ public class QuestionnaireService {
         List<Questionnaire> myQuestionnaireList = questionnaireRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
 
         for (Questionnaire questionnaire : myQuestionnaireList) {
-            questionnaireDtoList.add(QuestionnaireDto.converToQuestionnaireDto(questionnaire, Boolean.FALSE));
+            questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(questionnaire, Boolean.FALSE));
         }
 
         // 연동 정보 리스트
@@ -116,14 +116,10 @@ public class QuestionnaireService {
         }
 
         for (Questionnaire questionnaire : linkedQuestionnaireList) {
-            questionnaireDtoList.add(QuestionnaireDto.converToQuestionnaireDto(questionnaire, Boolean.TRUE));
+            questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(questionnaire, Boolean.TRUE));
         }
 
         return questionnaireDtoList;
-    }
-
-    public QuestionnaireDto getQuestionnaire(Long id) {
-        return QuestionnaireDto.converToQuestionnaireDto(questionnaireRepository.findById(id).get(), null);
     }
 
     @Transactional
@@ -169,9 +165,9 @@ public class QuestionnaireService {
     }
 
     @Transactional
-    public String unlinkQuestionnaire(String userEmail, Long linkedUserId) {
+    public String unlinkQuestionnaire(String userEmail, String linkedUserEmail) {
         Long myId = userRepository.findByEmail(userEmail).get().getId();
-        Long otherId = linkedUserId;
+        Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
 
         linkRepository.deleteByAllId(myId, otherId);
         linkRepository.deleteByAllId(otherId, myId);
