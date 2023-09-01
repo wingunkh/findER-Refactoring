@@ -121,9 +121,9 @@ public class BedService {
             }
         }
 
-        if(twoAgoList.size() == 8) twoAgoList.add(twoAgoBeds.get(119).getCount());
+        if(twoAgoList.size() == 8) twoAgoList.add(twoAgoBeds.get(twoAgoBeds.size() - 1).getCount());
 
-        LocalDateTime time = twoAgoBeds.get(119).getTime();
+        LocalDateTime time = twoAgoBeds.get(twoAgoBeds.size() - 1).getTime();
         System.out.println("\n" + time.getHour() + ":" + time.getMinute());
 
         return new BedDataDto(successTime, percent, otherPercent, twoAgoList,  null);
