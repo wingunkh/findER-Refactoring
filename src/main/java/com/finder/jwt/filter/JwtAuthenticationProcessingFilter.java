@@ -59,10 +59,12 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     // RefreshToken을 가진 User가 있다면 AT, RT 재발급하여 응답 헤더에 설정
     public void checkRTAndReIssueAT(HttpServletResponse response, String refreshToken) {
         userRepository.findByRefreshToken(refreshToken)
-                .ifPresent(user -> {
+                .ifPresentOrElse(user -> {
                     String newRefreshToken = reIssueRT(user);
                     jwtService.setAccessAndRefreshHeader(response, jwtService.createAccessToken(user.getEmail()),
                             newRefreshToken);
+                }, () -> {
+                    throw new RuntimeException("유효하지 않은 Refresh Token 입니다.");
                 });
     }
 
