@@ -63,19 +63,23 @@ public class QuestionnaireService {
         Optional<Users> user = userRepository.findByEmail(userEmail);
         Optional<Users> linkedUser = userRepository.findByEmail(linkDto.getLinkedUserEmail());
 
-        if (user.isPresent() && linkedUser.isPresent()) {
-            Link link = Link.builder()
-                    .user(user.get())
-                    .linkedUserId(linkedUser.get().getId())
-                    .familyRelations(linkDto.getFamilyRelations())
-                    .build();
-
-            linkRepository.save(link);
-
-            return "문진표 연동 요청 완료";
-        } else {
+        if (user.isEmpty() || linkedUser.isEmpty()) {
             return "사용자를 찾을 수 없습니다.";
         }
+
+        if (linkRepository.findByAllId(user.get().getId(), linkedUser.get().getId()).isPresent()) {
+            return "이미 연동 상태입니다.";
+        }
+
+        Link link = Link.builder()
+                .user(user.get())
+                .linkedUserId(linkedUser.get().getId())
+                .familyRelations(linkDto.getFamilyRelations())
+                .build();
+
+        linkRepository.save(link);
+
+        return "문진표 연동 요청 완료";
     }
 
     @Transactional
@@ -97,11 +101,11 @@ public class QuestionnaireService {
 
                 if (linkRepository.findByAllId(otherId, myId).isPresent()) {
                     return "문진표 연동 완료";
-                } try {
+                }
+
+                try {
                     Thread.sleep(3000); // 3초 대기
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-
                     return "문진표 연동 실패";
                 }
             }
