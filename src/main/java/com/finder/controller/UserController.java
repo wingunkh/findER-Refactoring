@@ -4,10 +4,11 @@ import com.finder.dto.SignUpDto;
 import com.finder.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +19,10 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity signup(@RequestBody SignUpDto signUpDto) {
         return ResponseEntity.ok(userService.createUser(signUpDto));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity logout(HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.logout(request.getHeader("Authorization"), userDetails.getUsername()));
     }
 }
