@@ -99,8 +99,12 @@ public class BedService {
         int minute = count - (hour * 60);
         String successTime = hour + "시간 " + minute + "분"; // output
 
-        double percent = (count / 240) * 100; // output
+        double percent = (count / 240.) * 100; // output
         double otherPercent = 100 - percent; // output
+
+        // 소수점 첫째 자리까지 반올림
+        percent = Math.round(percent * 10.0) / 10.0;
+        otherPercent = Math.round(otherPercent * 10.0) / 10.0;
 
         // 현재 시간의 2시간 전부터 현재 시간까지의 Bed 데이터
         LocalDateTime before2Time = currentTime.minusHours(2).minusMinutes(1);
