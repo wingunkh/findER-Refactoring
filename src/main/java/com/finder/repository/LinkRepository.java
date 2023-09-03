@@ -17,4 +17,8 @@ public interface LinkRepository extends JpaRepository<Link, Long> {
     @Modifying
     @Query(value = "delete from link where user_id = :userId and linked_user_id = :linkedUserId", nativeQuery = true)
     void deleteByAllId(Long userId, Long linkedUserId);
+
+    @Modifying
+    @Query(value = "delete from link where user_id = :id or linked_user_id = :id", nativeQuery = true)
+    void deleteByUserIdOrLinkedUserId(Long id);
 }

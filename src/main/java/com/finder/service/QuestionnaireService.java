@@ -2,6 +2,7 @@ package com.finder.service;
 
 import com.finder.domain.Link;
 import com.finder.domain.Questionnaire;
+import com.finder.domain.Users;
 import com.finder.dto.LinkDto;
 import com.finder.dto.QuestionnaireDto;
 import com.finder.repository.LinkRepository;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +28,15 @@ public class QuestionnaireService {
 
     @Transactional
     public String writeQuestionnaire(QuestionnaireDto questionnaireDto, String email) {
+        List<Questionnaire> questionnaireList = questionnaireRepository.findAllByUser(userRepository.findByEmail(email).get()).get();
+
+        for (Questionnaire questionnaire : questionnaireList) {
+            if ((Objects.equals(questionnaire.getFamilyRelations(), questionnaireDto.getFamilyRelations()))
+                    && (!Objects.equals(questionnaire.getFamilyRelations(), "자녀")) && !Objects.equals(questionnaire.getFamilyRelations(), "기타")) {
+                return "해당 문진표가 이미 존재합니다.";
+            }
+        }
+
         Questionnaire questionnaire = Questionnaire.builder()
                 .user(userRepository.findByEmail(email).get())
                 .name(questionnaireDto.getName())
@@ -48,40 +60,55 @@ public class QuestionnaireService {
 
     @Transactional
     public String linkRequest(String userEmail, LinkDto linkDto) {
-        Link link = Link.builder()
-                .user(userRepository.findByEmail(userEmail).get())
-                .linkedUserId(userRepository.findByEmail(linkDto.getLinkedUserEmail()).get().getId())
-                .familyRelations(linkDto.getFamilyRelations())
-                .build();
+        Optional<Users> user = userRepository.findByEmail(userEmail);
+        Optional<Users> linkedUser = userRepository.findByEmail(linkDto.getLinkedUserEmail());
 
-        linkRepository.save(link);
+        if (user.isPresent() && linkedUser.isPresent()) {
+            Link link = Link.builder()
+                    .user(user.get())
+                    .linkedUserId(linkedUser.get().getId())
+                    .familyRelations(linkDto.getFamilyRelations())
+                    .build();
 
-        return "문진표 연동 요청 완료";
+            linkRepository.save(link);
+
+            return "문진표 연동 요청 완료";
+        } else {
+            return "사용자를 찾을 수 없습니다.";
+        }
     }
 
     @Transactional
     public String waitLinkResponse(String userEmail, String linkedUserEmail) {
-        Long myId = userRepository.findByEmail(userEmail).get().getId();
-        Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
+        Optional<Users> user = userRepository.findByEmail(userEmail);
+        Optional<Users> linkedUser = userRepository.findByEmail(linkedUserEmail);
 
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + 3 * 60 * 1000;
+        if (user.isPresent() && linkedUser.isPresent()){
+            Long myId = user.get().getId();
+            Long otherId = linkedUser.get().getId();
 
-        while (System.currentTimeMillis() < endTime) {
-            if (linkRepository.findByAllId(myId, otherId).isEmpty()) {
-                return "문진표 연동 요청 취소 완료";
+            long startTime = System.currentTimeMillis();
+            long endTime = startTime + 3 * 60 * 1000;
+
+            while (System.currentTimeMillis() < endTime) {
+                if (linkRepository.findByAllId(myId, otherId).isEmpty()) {
+                    return "문진표 연동 요청 취소 완료";
+                }
+
+                if (linkRepository.findByAllId(otherId, myId).isPresent()) {
+                    return "문진표 연동 완료";
+                } try {
+                    Thread.sleep(3000); // 3초 대기
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+
+                    return "문진표 연동 실패";
+                }
             }
 
-            if (linkRepository.findByAllId(otherId, myId).isPresent()) {
-                return "문진표 연동 완료";
-            } try {
-                Thread.sleep(3000); // 3초 대기
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            linkRepository.deleteByAllId(myId, otherId);
         }
 
-        linkRepository.deleteByAllId(myId, otherId);
         return "문진표 연동 실패";
     }
 
@@ -106,11 +133,14 @@ public class QuestionnaireService {
             List<Link> otherLinkList = linkRepository.findAllByUser(userRepository.findById(link1.getLinkedUserId()).get()).get();
 
             for (Link link2 : otherLinkList) {
-                if (link1.getUser().getId() == link2.getLinkedUserId()){
-                    Questionnaire questionnaire = questionnaireRepository.findLinkedQuestionnaire(link2.getUser().getId()).get();
-                    questionnaire.setFamilyRelations(link1.getFamilyRelations());
+                if (Objects.equals(link1.getUser().getId(), link2.getLinkedUserId())){
+                    Optional<Questionnaire> optionalQuestionnaire = questionnaireRepository.findLinkedQuestionnaire(link2.getUser().getId());
 
-                    linkedQuestionnaireList.add(questionnaire);
+                    if (optionalQuestionnaire.isPresent()) {
+                        Questionnaire questionnaire = optionalQuestionnaire.get();
+                        questionnaire.setFamilyRelations(link1.getFamilyRelations());
+                        linkedQuestionnaireList.add(questionnaire);
+                    }
                 }
             }
         }
@@ -159,19 +189,31 @@ public class QuestionnaireService {
 
     @Transactional
     public String deleteQuestionnaire(Long id) {
-        questionnaireRepository.delete(questionnaireRepository.findById(id).get());
+        Questionnaire questionnaire = questionnaireRepository.findById(id).get();
+
+        questionnaireRepository.delete(questionnaire);
+
+        if (Objects.equals(questionnaire.getFamilyRelations(), "본인"))
+            linkRepository.deleteByUserIdOrLinkedUserId(id);
 
         return "문진표 삭제 완료";
     }
 
     @Transactional
     public String unlinkQuestionnaire(String userEmail, String linkedUserEmail) {
-        Long myId = userRepository.findByEmail(userEmail).get().getId();
-        Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
+        Optional<Users> user = userRepository.findByEmail(userEmail);
+        Optional<Users> linkedUser = userRepository.findByEmail(linkedUserEmail);
 
-        linkRepository.deleteByAllId(myId, otherId);
-        linkRepository.deleteByAllId(otherId, myId);
+        if (user.isPresent() && linkedUser.isPresent()) {
+            Long myId = userRepository.findByEmail(userEmail).get().getId();
+            Long otherId = userRepository.findByEmail(linkedUserEmail).get().getId();
 
-        return "문진표 연동 취소 완료";
+            linkRepository.deleteByAllId(myId, otherId);
+            linkRepository.deleteByAllId(otherId, myId);
+
+            return "문진표 연동 취소 완료";
+        } else {
+            return "문진표 연동 취소 실패";
+        }
     }
 }
