@@ -137,7 +137,7 @@ public class QuestionnaireService {
             List<Link> otherLinkList = linkRepository.findAllByUser(userRepository.findById(link1.getLinkedUserId()).get()).get();
 
             for (Link link2 : otherLinkList) {
-                if (Objects.equals(link1.getUser().getId(), link2.getLinkedUserId())){
+                if (Objects.equals(link1.getUser().getId(), link2.getLinkedUserId())) {
                     Optional<Questionnaire> optionalQuestionnaire = questionnaireRepository.findLinkedQuestionnaire(link2.getUser().getId());
 
                     if (optionalQuestionnaire.isPresent()) {
