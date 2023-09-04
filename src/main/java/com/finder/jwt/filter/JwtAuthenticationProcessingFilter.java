@@ -34,7 +34,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println(request.getRequestURI());
-        if (NO_CHECK_URL_SET.contains(request.getRequestURI())) {
+        if (NO_CHECK_URL_SET.contains(request.getRequestURI()) || request.getRequestURI().startsWith("/api/emailValidation")) {
             filterChain.doFilter(request, response);
             return;
         }

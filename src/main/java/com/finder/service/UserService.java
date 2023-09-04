@@ -40,4 +40,9 @@ public class UserService {
         redisUtil.setBlackList(accessToken, "accessToken", 3);
         return "로그아웃 완료";
     }
+
+    public Boolean emailValidation(String email) {
+        if(userRepository.findByEmail(email).isPresent()) return false;
+        else return true;
+    }
 }

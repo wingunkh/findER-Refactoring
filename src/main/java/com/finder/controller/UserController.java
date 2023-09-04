@@ -21,6 +21,11 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(signUpDto));
     }
 
+    @GetMapping("/emailValidation")
+    public ResponseEntity<Boolean> emailValidation(@RequestParam String email) {
+        return ResponseEntity.ok(userService.emailValidation(email));
+    }
+
     @DeleteMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(userService.logout(request.getHeader("Authorization"), userDetails.getUsername()));
