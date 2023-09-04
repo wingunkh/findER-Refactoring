@@ -2,6 +2,7 @@ package com.finder.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -16,8 +17,8 @@ import java.util.Map;
 
 @Service
 public class KakaoMobilityService {
-    // 인증키
-    private final String REST_KEY = "f5ab79d5d376224730ecd3b214369a8c";
+    @Value("${kakao.key}")
+    private String REST_KEY;
     private Map<String, String> map = new HashMap<>();
 
     public Map<String, String> requestKakaoMobilityApi(Double originLat, Double originLon, Double destinationLat, Double destinationLon) {
