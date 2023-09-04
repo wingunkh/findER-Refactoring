@@ -63,6 +63,10 @@ public class QuestionnaireService {
         Optional<Users> user = userRepository.findByEmail(userEmail);
         Optional<Users> linkedUser = userRepository.findByEmail(linkDto.getLinkedUserEmail());
 
+        if (Objects.equals(user, linkedUser)) {
+            return "본인의 이메일은 입력할 수 없습니다.";
+        }
+
         if (user.isEmpty() || linkedUser.isEmpty()) {
             return "사용자를 찾을 수 없습니다.";
         }
@@ -104,7 +108,7 @@ public class QuestionnaireService {
                 }
 
                 try {
-                    Thread.sleep(3000); // 3초 대기
+                    Thread.sleep(1000); // 1초 대기
                 } catch (InterruptedException e) {
                     return "문진표 연동 실패";
                 }
