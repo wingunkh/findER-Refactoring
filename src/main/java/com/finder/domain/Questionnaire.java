@@ -22,7 +22,7 @@ public class Questionnaire {
 
     private String name;
 
-    private Integer age;
+    private String birthday;
 
     private String familyRelations;
 

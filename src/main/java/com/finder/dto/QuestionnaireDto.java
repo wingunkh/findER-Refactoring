@@ -13,7 +13,7 @@ public class QuestionnaireDto {
 
     private String name;
 
-    private Integer age;
+    private String birthday;
 
     private String familyRelations;
 
@@ -42,7 +42,7 @@ public class QuestionnaireDto {
                 .id(questionnaire.getId())
                 .email(questionnaire.getUser().getEmail())
                 .name(questionnaire.getName())
-                .age(questionnaire.getAge())
+                .birthday(questionnaire.getBirthday())
                 .familyRelations(questionnaire.getFamilyRelations())
                 .phoneNum(questionnaire.getPhoneNum())
                 .address(questionnaire.getAddress())

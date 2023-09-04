@@ -40,7 +40,7 @@ public class QuestionnaireService {
         Questionnaire questionnaire = Questionnaire.builder()
                 .user(userRepository.findByEmail(email).get())
                 .name(questionnaireDto.getName())
-                .age(questionnaireDto.getAge())
+                .birthday(questionnaireDto.getBirthday())
                 .familyRelations(questionnaireDto.getFamilyRelations())
                 .phoneNum(questionnaireDto.getPhoneNum())
                 .address(questionnaireDto.getAddress())
@@ -162,7 +162,7 @@ public class QuestionnaireService {
 
         questionnaire.setName(updatedQuestionnaireDto.getName());
 
-        questionnaire.setAge(updatedQuestionnaireDto.getAge());
+        questionnaire.setBirthday(updatedQuestionnaireDto.getBirthday());
 
         questionnaire.setFamilyRelations(updatedQuestionnaireDto.getFamilyRelations());
 
