@@ -1,5 +1,6 @@
 package com.finder.controller;
 
+import com.finder.dto.LinkDto;
 import com.finder.dto.QuestionnaireDto;
 import com.finder.service.QuestionnaireService;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,22 @@ public class QuestionnaireController {
         return ResponseEntity.ok(questionnaireService.writeQuestionnaire(questionnaireDto, userDetail.getUsername()));
     }
 
+    // 문진표 연동 요청
+    @PostMapping("/link")
+    public ResponseEntity linkRequest(@RequestBody LinkDto linkDto, @AuthenticationPrincipal UserDetails userDetail) {
+        return ResponseEntity.ok(questionnaireService.linkRequest(userDetail.getUsername(), linkDto));
+    }
+
+    // 문진표 연동 응답 대기
+    @GetMapping("/link")
+    public ResponseEntity waitLinkResponse(@RequestParam String linkedUserEmail, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(questionnaireService.waitLinkResponse(userDetails.getUsername(), linkedUserEmail));
+    }
+
     // 전체 문진표 리스트 조회
     @GetMapping()
     public ResponseEntity<List<QuestionnaireDto>> getAllQuestionnaires(@AuthenticationPrincipal UserDetails userDetail) {
         return ResponseEntity.ok(questionnaireService.getAllQuestionnaires(userDetail.getUsername()));
-    }
-
-    // 문진표 상세 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<QuestionnaireDto> getQuestionnaire(@PathVariable Long id) {
-        return ResponseEntity.ok(questionnaireService.getQuestionnaire(id));
     }
 
     // 문진표 수정
@@ -44,4 +51,10 @@ public class QuestionnaireController {
     public ResponseEntity deleteQuestionnaire(@PathVariable Long id) {
         return ResponseEntity.ok(questionnaireService.deleteQuestionnaire(id));
     }
-}
+
+    // 문진표 연동 취소
+    @DeleteMapping("/unlink")
+    public ResponseEntity unlinkQuestionnaire(@RequestParam String linkedUserEmail, @AuthenticationPrincipal UserDetails userDetail) {
+        return ResponseEntity.ok(questionnaireService.unlinkQuestionnaire(userDetail.getUsername(), linkedUserEmail));
+    }
+}   

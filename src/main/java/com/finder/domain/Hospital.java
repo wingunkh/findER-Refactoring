@@ -13,7 +13,9 @@ import javax.persistence.*;
 @Getter
 public class Hospital extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HOSPITAL_SEQUENCE_GENERATOR")
+    @SequenceGenerator(name = "HOSPITAL_SEQUENCE_GENERATOR", sequenceName = "HOSPITAL_SQ", initialValue = 1, allocationSize = 1)
     private Long id;
 
     private String name;

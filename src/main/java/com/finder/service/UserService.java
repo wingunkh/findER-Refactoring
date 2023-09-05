@@ -1,7 +1,7 @@
 package com.finder.service;
 
 import com.finder.domain.Role;
-import com.finder.domain.User;
+import com.finder.domain.Users;
 import com.finder.dto.SignUpDto;
 import com.finder.repository.UserRepository;
 import com.finder.util.RedisUtil;
@@ -20,7 +20,7 @@ public class UserService {
 
     @Transactional
     public String createUser(SignUpDto signUpDto) {
-        User user = User.builder()
+        Users user = Users.builder()
                 .email(signUpDto.getEmail())
                 .password(signUpDto.getPassword())
                 .name(signUpDto.getName())
@@ -34,7 +34,7 @@ public class UserService {
 
     @Transactional
     public String logout(String accessToken, String email) {
-        User user = userRepository.findByEmail(email)
+        Users user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("찾으시는 사용자가 존재하지 않습니다."));
         user.updateRefreshToken(null);
         redisUtil.setBlackList(accessToken, "accessToken", 3);
