@@ -11,17 +11,17 @@ import java.util.List;
 public interface BedRepository extends JpaRepository<Bed, BedId> {
 
     @Query("SELECT b FROM Bed b WHERE b.name = :name " +
-            "AND year(b.time) = year(:time) " +
-            "AND month(b.time) = month(:time) " +
-            "AND dayOfMonth(b.time) = dayOfMonth(:time) " +
-            "AND hour(b.time) = hour(:time) " +
-            "AND minute(b.time) = minute(:time)")
+            "AND EXTRACT(YEAR FROM b.localDateTime) = EXTRACT(YEAR FROM :time) " +
+            "AND EXTRACT(MONTH FROM b.localDateTime) = EXTRACT(MONTH FROM :time) " +
+            "AND EXTRACT(DAY FROM b.localDateTime) = EXTRACT(DAY FROM :time) " +
+            "AND EXTRACT(HOUR FROM b.localDateTime) = EXTRACT(HOUR FROM :time) " +
+            "AND EXTRACT(MINUTE FROM b.localDateTime) = EXTRACT(MINUTE FROM :time)")
     Bed findByNameAndTime(String name, LocalDateTime time);
 
     @Query("select b " +
             "from Bed b " +
             "where b.name = :name and " +
-            "b.time between :beforeTime and :currentTime")
+            "b.localDateTime between :beforeTime and :currentTime")
     List<Bed> findByRecent(String name, LocalDateTime beforeTime, LocalDateTime currentTime);
 
 //    @Query("select b " +
@@ -32,7 +32,7 @@ public interface BedRepository extends JpaRepository<Bed, BedId> {
     @Query(value = "SELECT * " +
         "FROM bed " +
         "WHERE name = :name " +
-        "AND time BETWEEN :beforeTime AND :currentTime " +
+        "AND localDateTime BETWEEN :beforeTime AND :currentTime " +
         "AND MOD(TIMESTAMPDIFF(MINUTE, :beforeTime, time), 15) = 0", nativeQuery = true)
     List<Bed> findByNewRecent(String name, LocalDateTime beforeTime, LocalDateTime currentTime);
 }

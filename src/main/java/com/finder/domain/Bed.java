@@ -19,7 +19,8 @@ public class Bed {
     @Id
     private String name;
     @Id
-    private LocalDateTime time;
+    private String time;
+    private LocalDateTime localDateTime;
     private Integer count;
 
 }
