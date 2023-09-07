@@ -116,8 +116,12 @@ public class HospitalService {
         // 병상수, 병상 데이터 조회
         BedDataDto bedDataDto = bedService.findByRecentV2(hospital.getName());
         int hvec = bedDataDto.getTwoAgoList().get(8);
+        if(hvec<0) hvec = 0;
 
-        HospitalDetailDto hospitalDetailDto = new HospitalDetailDto(hospital.getName(), hospital.getAddress(), hospital.getSimpleAddress(),
+        String sa = "";
+        if(hospital.getSimpleAddress() != null) sa = hospital.getSimpleAddress();
+
+        HospitalDetailDto hospitalDetailDto = new HospitalDetailDto(hospital.getName(), hospital.getAddress(), sa,
                 hospital.getRepresentativeContact(), hospital.getEmergencyContact(), ambulance, ct, mri,
                 hvec, Double.parseDouble(map.get("distance")), map.get("arriveTime"), hospital.getLatitude(),
                 hospital.getLongitude(), bedDataDto);
