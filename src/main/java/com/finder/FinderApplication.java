@@ -1,6 +1,5 @@
 package com.finder;
 
-import com.finder.domain.Bed;
 import com.finder.repository.BedRepository;
 import com.finder.xml.XmlService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-
-import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 
 @SpringBootApplication
 @Slf4j

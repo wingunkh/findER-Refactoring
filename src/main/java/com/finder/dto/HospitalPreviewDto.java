@@ -7,11 +7,18 @@ import lombok.Data;
 @AllArgsConstructor
 public class HospitalPreviewDto {
     private Long hospitalId;
+
     private String name;
+
     private String address;
+
     private String representativeContact;
+
     private String emergencyContact;
+
     private Integer hvec;
+
     private Double distance;
+
     private String arrivalTime;
 }
