@@ -1,6 +1,5 @@
 package com.finder.config;
 
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -13,6 +12,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns("*", "http:/localhost:8080/")
                 .allowedMethods("*")
                 .allowedHeaders("*");
-//                .allowCredentials(true);
     }
 }
