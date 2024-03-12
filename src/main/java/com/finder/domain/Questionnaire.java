@@ -11,36 +11,37 @@ import javax.persistence.*;
 @Setter
 public class Questionnaire {
     @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "QUESTIONNAIRE_SEQUENCE_GENERATOR")
-    @SequenceGenerator(name = "QUESTIONNAIRE_SEQUENCE_GENERATOR", sequenceName = "QUESTIONNAIRE_SQ", initialValue = 1, allocationSize = 1)
-    private Long id;
+    private String phoneNumber; // 연락처
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    private Users user;
+    @OneToOne
+    @MapsId
+    private Account account;
 
-    private String name;
+    private String name; // 이름
 
-    private String birthday;
+    private String age; // 나이
 
-    private String familyRelations;
+    private String gender; // 성별
 
-    private String phoneNum;
+    private String relation; // 가족 관계
 
-    private String address;
+    private String bloodType; // 혈액형
 
-    private String gender;
+    private String address; // 주소
 
-    private String bloodType;
+    private String allergy; // 알러지 정보
 
-    private String allergy;
+    private String disease; // 앓고있는 질환
 
-    private String medicine;
+    private String medicine; // 복용 중인 약
 
-    private String smokingCycle;
+    private String surgery; // 수술 이력
 
-    private String drinkingCycle;
+    private String drink; // 음주 정보
 
-    private String etc;
+    private String smoke; // 흡연 정보
+
+    private String etc; // 기타 특이사항
+
+    private Boolean isLinked; // 연동 여부
 }
