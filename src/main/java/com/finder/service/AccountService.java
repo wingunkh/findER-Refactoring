@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.security.SecureRandom;
 import java.util.Optional;
 
 @Service
@@ -23,8 +24,9 @@ public class AccountService {
         } else {
             String salt = SHAUtil.getSalt();
             String encryptedRrn = SHAUtil.encryptWithSalt(accountRequestDto.rrn, salt);
+            String serialNumber = generateSerialNumber();
 
-            accountRepository.save(new Account(accountRequestDto.phoneNumber, encryptedRrn, salt));
+            accountRepository.save(new Account(accountRequestDto.phoneNumber, encryptedRrn, salt, serialNumber));
 
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
         }
@@ -46,5 +48,18 @@ public class AccountService {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다.");
         }
+    }
+
+    public String generateSerialNumber() {
+        StringBuilder sb = new StringBuilder();
+        SecureRandom random = new SecureRandom();
+        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (int i = 0; i < 16; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return sb.toString();
     }
 }

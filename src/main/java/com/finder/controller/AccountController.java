@@ -15,12 +15,12 @@ public class AccountController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody AccountRequestDto accountRequestDto) {
-        return ResponseEntity.ok(accountService.signup(accountRequestDto));
+        return accountService.signup(accountRequestDto);
     }
 
     // 로그인
     @GetMapping("/login")
     public ResponseEntity<Object> login(@RequestBody AccountRequestDto accountRequestDto) {
-        return ResponseEntity.ok(accountService.login(accountRequestDto));
+        return accountService.login(accountRequestDto);
     }
 }
