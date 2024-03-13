@@ -17,9 +17,9 @@ public class AccountService {
     public final AccountRepository accountRepository;
 
     public ResponseEntity<Object> signup(AccountRequestDto accountRequestDto) {
-        Optional<Account> optionalMember = accountRepository.findById(accountRequestDto.phoneNumber);
+        Optional<Account> optionalAccount = accountRepository.findById(accountRequestDto.phoneNumber);
 
-        if (optionalMember.isPresent()) {
+        if (optionalAccount.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 가입된 회원이 존재합니다.");
         } else {
             String salt = SHAUtil.getSalt();
@@ -33,13 +33,13 @@ public class AccountService {
     }
 
     public ResponseEntity<Object> login(AccountRequestDto accountRequestDto) {
-        Optional<Account> optionalMember = accountRepository.findById(accountRequestDto.phoneNumber);
+        Optional<Account> optionalAccount = accountRepository.findById(accountRequestDto.phoneNumber);
 
-        if (optionalMember.isEmpty()) {
+        if (optionalAccount.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다.");
         }
 
-        Account account = optionalMember.get();
+        Account account = optionalAccount.get();
         String salt = account.getSalt();
         String encryptedRrn = SHAUtil.encryptWithSalt(accountRequestDto.rrn, salt);
 
