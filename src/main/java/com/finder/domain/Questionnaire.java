@@ -4,9 +4,9 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
 public class Questionnaire {
@@ -22,8 +22,6 @@ public class Questionnaire {
     private String age; // 나이
 
     private String gender; // 성별
-
-    private String relation; // 가족 관계
 
     private String bloodType; // 혈액형
 
@@ -42,6 +40,4 @@ public class Questionnaire {
     private String smoke; // 흡연 정보
 
     private String etc; // 기타 특이사항
-
-    private Boolean isLinked; // 연동 여부
 }
