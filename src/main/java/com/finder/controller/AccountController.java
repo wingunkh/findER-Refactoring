@@ -21,7 +21,7 @@ public class AccountController {
     }
 
     // 로그인
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody AccountRequestDto accountRequestDto) {
         return accountService.login(accountRequestDto);
     }
