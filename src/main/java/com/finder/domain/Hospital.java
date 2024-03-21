@@ -11,30 +11,29 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Hospital extends BaseEntity {
+public class Hospital {
     @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HOSPITAL_SEQUENCE_GENERATOR")
     @SequenceGenerator(name = "HOSPITAL_SEQUENCE_GENERATOR", sequenceName = "HOSPITAL_SQ", initialValue = 1, allocationSize = 1)
-    private Long id;
+    private Long id; // 기본키
 
-    private String name;
+    private String name; // 병원명
 
-    private String address;
+    private String address; // 병원 주소
 
-    private String simpleAddress;
+    private String mapAddress; // 약도 상 주소
 
-    private String representativeContact;
+    private String tel; // 병원 전화번호
 
-    private String emergencyContact;
+    private String ERTel; // 응급실 전화번호
 
-    private String ambulance;
+    private String ambulance; // 구급차 가용 여부
 
-    private String ct;
+    private String CT; // CT 가용 여부
 
-    private String mri;
+    private String MRI; // MRI 가용 여부
 
-    private Double latitude;
+    private Double latitude; // 병원 위도
 
-    private Double longitude;
+    private Double longitude; // 병원 경도
 }
