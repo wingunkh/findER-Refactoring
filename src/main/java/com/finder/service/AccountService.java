@@ -21,7 +21,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AccountService {
     public final AccountRepository accountRepository;
-
     public final LinkRepository linkRepository;
 
     @Transactional
@@ -30,15 +29,15 @@ public class AccountService {
 
         if (optionalAccount.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 가입된 회원이 존재합니다.");
-        } else {
-            String salt = SHAUtil.getSalt();
-            String encryptedRrn = SHAUtil.encryptWithSalt(accountRequestDto.rrn, salt);
-            String serialNumber = generateSerialNumber();
-
-            accountRepository.save(new Account(accountRequestDto.phoneNumber, encryptedRrn, salt, serialNumber));
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
         }
+
+        String salt = SHAUtil.getSalt();
+        String encryptedRrn = SHAUtil.encryptWithSalt(accountRequestDto.rrn, salt);
+        String serialNumber = generateSerialNumber();
+
+        accountRepository.save(new Account(accountRequestDto.phoneNumber, encryptedRrn, salt, serialNumber));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입에 성공하였습니다.");
     }
 
     @Transactional(readOnly = true)
@@ -54,9 +53,9 @@ public class AccountService {
 
         if (encryptedRrn.equals(optionalAccount.get().getRrn())) {
             return ResponseEntity.status(HttpStatus.OK).body("로그인에 성공하였습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패하였습니다.");
         }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인에 실패하였습니다.");
     }
 
     @Transactional(readOnly = true)
