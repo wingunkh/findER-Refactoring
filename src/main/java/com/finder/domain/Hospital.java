@@ -19,13 +19,13 @@ public class Hospital {
 
     private String name; // 병원명
 
-    private String address; // 병원 주소
+    private String address; // 주소
 
     private String mapAddress; // 약도 상 주소
 
-    private String tel; // 병원 전화번호
+    private String tel; // 병원 연락처
 
-    private String ERTel; // 응급실 전화번호
+    private String ERTel; // 응급실 연락처
 
     private String ambulance; // 구급차 가용 여부
 
@@ -33,7 +33,7 @@ public class Hospital {
 
     private String MRI; // MRI 가용 여부
 
-    private Double latitude; // 병원 위도
+    private Double latitude; // 위도
 
-    private Double longitude; // 병원 경도
+    private Double longitude; // 경도
 }

@@ -8,11 +8,11 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Data
 public class Item {
-    // 기관명
+    // 병원명
     @XmlElement(name = "dutyName")
     private String dutyName;
 
-    // 병상수
+    // 병상 수
     @XmlElement(name = "hvec")
     private Long hvec;
 
@@ -20,11 +20,11 @@ public class Item {
     @XmlElement(name = "dutyAddr")
     private String dutyAddr;
 
-    // 약도
+    // 약도 상 주소
     @XmlElement(name = "dutyMapimg")
     private String dutyMapimg;
 
-    // 대표 연락처
+    // 병원 연락처
     @XmlElement(name = "dutyTel1")
     private String dutyTel1;
 
@@ -51,12 +51,4 @@ public class Item {
     // 경도
     @XmlElement(name = "wgs84Lon")
     private Double wgs84Lon;
-
-    public void update(String dutyAddr, String dutyMapimg, String dutyTel1, Double wgs84Lat, Double wgs84Lon) {
-        this.dutyAddr = dutyAddr;
-        this.dutyMapimg = dutyMapimg;
-        this.dutyTel1 = dutyTel1;
-        this.wgs84Lat = wgs84Lat;
-        this.wgs84Lon = wgs84Lon;
-    }
 }

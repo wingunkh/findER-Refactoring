@@ -11,5 +11,5 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Data
 public class XmlModel {
     @XmlElement(name = "body")
-    private ResponseBody body;
+    private Body body;
 }

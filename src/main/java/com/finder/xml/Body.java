@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResponseBody {
+public class Body {
     @XmlElement(name = "items")
     private Items items;
 }
