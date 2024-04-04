@@ -20,9 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QuestionnaireService {
     private final QuestionnaireRepository questionnaireRepository;
-
     private final AccountRepository accountRepository;
-
     private final LinkRepository linkRepository;
 
     @Transactional
