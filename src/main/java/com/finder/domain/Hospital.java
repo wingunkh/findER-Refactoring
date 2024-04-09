@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 public class Hospital {
     @Id
@@ -17,7 +17,9 @@ public class Hospital {
     @SequenceGenerator(name = "HOSPITAL_SEQUENCE_GENERATOR", sequenceName = "HOSPITAL_SQ", initialValue = 1, allocationSize = 1)
     private Long id; // 기본키
 
-    private String name; // 병원명
+    private String hpid; // 기관 번호
+
+    private String name; // 응급실 이름
 
     private String address; // 주소
 
