@@ -1,16 +1,18 @@
 package com.finder.service;
 
+import com.finder.domain.Bed;
 import com.finder.domain.Hospital;
+import com.finder.repository.BedRepository;
 import com.finder.repository.HospitalRepository;
-import com.finder.xml.Item;
-import com.finder.xml.XmlModel;
+import com.finder.xml.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,36 +22,105 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
+@EnableScheduling
 public class PublicDataAPIService {
     @Value("${api.key}")
     private String key;
-    private static final Logger logger = LoggerFactory.getLogger(PublicDataAPIService.class);
+    Logger logger = LoggerFactory.getLogger(PublicDataAPIService.class);
+    List<Bed> bedList = new ArrayList<>();
+    Boolean isFirst = true;
+
+    private final BedRepository bedRepository;
     private final HospitalRepository hospitalRepository;
 
-    // 병원 기본정보 조회
-    public void getHospitalInfo() throws IOException, JAXBException {
+    // 응급실 실시간 병상 수 갱신 (1분 간격)
+    @Scheduled(cron = "1 * * * * *") // 스케줄링 (매 분 1초)
+    public void updateBedsCountEveryMinute() {
         long startTime = System.currentTimeMillis();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String time = localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        // HTTP Request 생성
-        String urlBuilder = "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytBassInfoInqire" +
-                "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + key +
-                "&" + URLEncoder.encode("HPID", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) +
-                "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) +
-                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("103000", StandardCharsets.UTF_8);
-        URL url = new URL(urlBuilder);
+        try {
+            List<XmlModel1.Item> itemList = getEmergencyRoomData();
+            bedList.clear();
+
+            for (XmlModel1.Item item : itemList) {
+                Bed bed = Bed.builder()
+                        .hpID(item.getHpid())
+                        .time(time)
+                        .localDateTime(localDateTime)
+                        .count(item.getHvec()).build();
+
+                bedList.add(bed);
+            }
+
+            bedRepository.saveAll(bedList);
+            logger.info(time + " updateBedsCountEveryMinute() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
+        } catch (Exception e) {
+            errorHandler(time);
+        }
+    }
+
+    // 응급실 정보 저장 (최초 실행 시)
+    public void updateEmergencyRoomInfo() {
+        long startTime = System.currentTimeMillis();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String time = localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+        String tmp = "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytBassInfoInqire" +
+                "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + key;
+
+        try {
+            List<XmlModel1.Item> itemList1 = getEmergencyRoomData();
+
+            for (XmlModel1.Item item : itemList1) {
+                // 응급의료기관 기본정보 조회 API 호출
+                String xmlData = sendHttpRequest(tmp + "&" + URLEncoder.encode("HPID", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(item.getHpid(), StandardCharsets.UTF_8));
+                StringReader reader = new StringReader(xmlData);
+
+                JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel2.class);
+                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+                // XML 데이터를 Java 객체로 변환 (언마샬링)
+                XmlModel2 xmlModel2 = (XmlModel2) unmarshaller.unmarshal(reader);
+                List<XmlModel2.Item> itemList2 = xmlModel2.getBody().getItems().getItem();
+
+                Hospital hospital = Hospital.builder()
+                        .hpid(item.getHpid())
+                        .name(itemList2.get(0).getDutyName())
+                        .address(itemList2.get(0).getDutyAddr())
+                        .mapAddress(itemList2.get(0).getDutyMapimg())
+                        .tel(itemList2.get(0).getDutyTel1())
+                        .ERTel(itemList2.get(0).getDutyTel3())
+                        .ambulance(item.getHvamyn())
+                        .CT(item.getHvctayn())
+                        .MRI(item.getHvmriayn()).build();
+
+                hospitalRepository.save(hospital);
+            }
+        } catch (Exception e) {
+            logger.error("updateEmergencyRoomInfo() Error", e);
+        }
+
+        isFirst = true;
+        logger.info(time + " updateEmergencyRoomInfo() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
+    }
+
+    public String sendHttpRequest(String urlString) throws IOException {
+        URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
-        // HTTP Request 전송 및 HTTP Response 상태 코드 확인
-        int responseCode = conn.getResponseCode();
-        logger.info("Response code: {}", responseCode);
-
         // HTTP Response 저장
+        int responseCode = conn.getResponseCode();
         BufferedReader bufferedReader;
 
         if (responseCode >= 200 && responseCode < 300) {
@@ -72,39 +143,48 @@ public class PublicDataAPIService {
         bufferedReader.close();
         conn.disconnect();
 
-        // XML 데이터를 Java 객체로 변환 (언마샬링)
-        String xmlData = stringBuilder.toString();
+        return stringBuilder.toString();
+    }
+
+    public List<XmlModel1.Item> getEmergencyRoomData() throws Exception {
+        String tmp = "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire" +
+                "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + key +
+                "&" + URLEncoder.encode("STAGE1", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시도)
+                "&" + URLEncoder.encode("STAGE2", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시군구)
+                "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + // 페이지 번호
+                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("410", StandardCharsets.UTF_8); // 목록 건수
+
+        // 응급실 실시간 가용병상정보 조회 API 호출
+        String xmlData = sendHttpRequest(tmp);
         StringReader reader = new StringReader(xmlData);
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel.class);
+        JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel1.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-        XmlModel xmlModel = (XmlModel) unmarshaller.unmarshal(reader);
-        List<Item> items = xmlModel.getBody().getItems().getItem();
+        // XML 데이터를 Java 객체로 변환 (언마샬링)
+        XmlModel1 xmlModel1 = (XmlModel1) unmarshaller.unmarshal(reader);
+        List<XmlModel1.Item> itemList = xmlModel1.getBody().getItems().getItem();
 
-        logger.info("Data 수 : {}", items.size());
+        logger.info("Data 수 : {}", itemList.size());
 
-        // 병원 데이터 저장
-        List<Hospital> hospitals = new ArrayList<>();
-
-        for (Item item : items) {
-            Hospital hospital = Hospital.builder()
-                    .name(item.getDutyName())
-                    .address(item.getDutyAddr())
-                    .mapAddress(item.getDutyMapimg())
-                    .tel(item.getDutyTel1())
-                    .ERTel(item.getDutyTel3())
-                    .ambulance(item.getHvamyn())
-                    .CT(item.getHvctayn())
-                    .MRI(item.getHvmriayn())
-                    .latitude(item.getWgs84Lat())
-                    .longitude(item.getWgs84Lon()).build();
-
-            hospitals.add(hospital);
-            logger.info(hospital.getAddress());
+        if (isFirst) {
+            isFirst = false;
+        } else if (!Objects.equals(bedList.size(), itemList.size())) {
+            throw new Exception("특정 응급실에 대한 데이터가 누락되었습니다.");
         }
 
-        hospitalRepository.saveAll(hospitals);
-        logger.info("getHospitalInfo 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
+        return itemList;
+    }
+
+    public void errorHandler(String time) {
+        long startTime = System.currentTimeMillis();
+
+        for (Bed bed : bedList) {
+            bed.increaseByOneMinute();
+            bed.setLocalDateTime(bed.getLocalDateTime().plusMinutes(1));
+        }
+
+        bedRepository.saveAll(bedList);
+        logger.info(time + " errorHandler() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
     }
 }
