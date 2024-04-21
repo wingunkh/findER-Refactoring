@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LinkRequestDto {
-    private String phoneNumber;
+    private String phoneNumber; // 휴대전화 번호
 
-    private String linkedSerialNumber;
+    private String linkedSerialNumber; // 연동된 계정의 일련번호
 }
