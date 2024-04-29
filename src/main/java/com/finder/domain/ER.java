@@ -11,19 +11,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Getter
-public class Hospital {
+public class ER {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HOSPITAL_SEQUENCE_GENERATOR")
-    @SequenceGenerator(name = "HOSPITAL_SEQUENCE_GENERATOR", sequenceName = "HOSPITAL_SQ", initialValue = 1, allocationSize = 1)
-    private Long id; // 기본키
-
-    private String hpid; // 기관 번호
+    private String hpID; // 기관 코드
 
     private String name; // 응급실 이름
 
     private String address; // 주소
 
-    private String mapAddress; // 약도 상 주소
+    private String mapAddress; // 약도 주소
 
     private String tel; // 병원 연락처
 

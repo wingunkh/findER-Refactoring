@@ -1,9 +1,9 @@
 package com.finder.service;
 
 import com.finder.domain.Bed;
-import com.finder.domain.Hospital;
+import com.finder.domain.ER;
 import com.finder.repository.BedRepository;
-import com.finder.repository.HospitalRepository;
+import com.finder.repository.ERRepository;
 import com.finder.xml.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class PublicDataAPIService {
     Boolean isFirst = true;
 
     private final BedRepository bedRepository;
-    private final HospitalRepository hospitalRepository;
+    private final ERRepository ERRepository;
 
     // 응급실 실시간 병상 수 갱신 (1분 간격)
     @Scheduled(cron = "1 * * * * *") // 스케줄링 (매 분 1초)
@@ -65,7 +65,7 @@ public class PublicDataAPIService {
             bedRepository.saveAll(bedList);
             logger.info(time + " updateBedsCountEveryMinute() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
         } catch (Exception e) {
-            errorHandler(time);
+            errorHandling(time);
         }
     }
 
@@ -84,17 +84,16 @@ public class PublicDataAPIService {
             for (XmlModel1.Item item : itemList1) {
                 // 응급의료기관 기본정보 조회 API 호출
                 String xmlData = sendHttpRequest(tmp + "&" + URLEncoder.encode("HPID", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(item.getHpid(), StandardCharsets.UTF_8));
-                StringReader reader = new StringReader(xmlData);
-
-                JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel2.class);
-                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
                 // XML 데이터를 Java 객체로 변환 (언마샬링)
-                XmlModel2 xmlModel2 = (XmlModel2) unmarshaller.unmarshal(reader);
+                StringReader stringReader = new StringReader(xmlData);
+                JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel2.class);
+                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+                XmlModel2 xmlModel2 = (XmlModel2) unmarshaller.unmarshal(stringReader);
                 List<XmlModel2.Item> itemList2 = xmlModel2.getBody().getItems().getItem();
 
-                Hospital hospital = Hospital.builder()
-                        .hpid(item.getHpid())
+                ER er = ER.builder()
+                        .hpID(item.getHpid())
                         .name(itemList2.get(0).getDutyName())
                         .address(itemList2.get(0).getDutyAddr())
                         .mapAddress(itemList2.get(0).getDutyMapimg())
@@ -104,7 +103,7 @@ public class PublicDataAPIService {
                         .CT(item.getHvctayn())
                         .MRI(item.getHvmriayn()).build();
 
-                hospitalRepository.save(hospital);
+                ERRepository.save(er);
             }
         } catch (Exception e) {
             logger.error("updateEmergencyRoomInfo() Error", e);
@@ -113,6 +112,36 @@ public class PublicDataAPIService {
         isFirst = true;
         logger.info(time + " updateEmergencyRoomInfo() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
     }
+
+    public List<XmlModel1.Item> getEmergencyRoomData() throws Exception {
+        String tmp = "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire" +
+                "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + key +
+                "&" + URLEncoder.encode("STAGE1", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시도)
+                "&" + URLEncoder.encode("STAGE2", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시군구)
+                "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + // 페이지 번호
+                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("410", StandardCharsets.UTF_8); // 목록 건수
+
+        // 응급실 실시간 가용병상정보 조회 API 호출
+        String xmlData = sendHttpRequest(tmp);
+
+        // XML 데이터를 Java 객체로 변환 (언마샬링)
+        StringReader stringReader = new StringReader(xmlData);
+        JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel1.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        XmlModel1 xmlModel1 = (XmlModel1) unmarshaller.unmarshal(stringReader);
+        List<XmlModel1.Item> itemList = xmlModel1.getBody().getItems().getItem();
+
+        logger.info("Data 수 : {}", itemList.size());
+
+        if (isFirst) {
+            isFirst = false;
+        } else if (!Objects.equals(bedList.size(), itemList.size())) {
+            throw new Exception("특정 응급실에 대한 데이터가 누락되었습니다.");
+        }
+
+        return itemList;
+    }
+    
 
     public String sendHttpRequest(String urlString) throws IOException {
         URL url = new URL(urlString);
@@ -146,37 +175,7 @@ public class PublicDataAPIService {
         return stringBuilder.toString();
     }
 
-    public List<XmlModel1.Item> getEmergencyRoomData() throws Exception {
-        String tmp = "http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEmrrmRltmUsefulSckbdInfoInqire" +
-                "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + key +
-                "&" + URLEncoder.encode("STAGE1", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시도)
-                "&" + URLEncoder.encode("STAGE2", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시군구)
-                "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + // 페이지 번호
-                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("410", StandardCharsets.UTF_8); // 목록 건수
-
-        // 응급실 실시간 가용병상정보 조회 API 호출
-        String xmlData = sendHttpRequest(tmp);
-        StringReader reader = new StringReader(xmlData);
-
-        JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel1.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-        // XML 데이터를 Java 객체로 변환 (언마샬링)
-        XmlModel1 xmlModel1 = (XmlModel1) unmarshaller.unmarshal(reader);
-        List<XmlModel1.Item> itemList = xmlModel1.getBody().getItems().getItem();
-
-        logger.info("Data 수 : {}", itemList.size());
-
-        if (isFirst) {
-            isFirst = false;
-        } else if (!Objects.equals(bedList.size(), itemList.size())) {
-            throw new Exception("특정 응급실에 대한 데이터가 누락되었습니다.");
-        }
-
-        return itemList;
-    }
-
-    public void errorHandler(String time) {
+    public void errorHandling(String time) {
         long startTime = System.currentTimeMillis();
 
         for (Bed bed : bedList) {
