@@ -1,10 +1,10 @@
 package com.finder.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class ERPreviewDto {
     private String hpID; // 기관 코드
 
