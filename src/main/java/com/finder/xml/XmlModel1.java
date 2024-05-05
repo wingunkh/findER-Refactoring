@@ -25,12 +25,12 @@ public class XmlModel1 {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Items {
         @XmlElement(name = "item")
-        private List<Item> item;
+        private List<Item1> item1;
     }
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Item {
+    public static class Item1 {
         // 기관 코드
         @XmlElement(name = "hpid")
         private String hpid;

@@ -25,12 +25,12 @@ public class XmlModel2 {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Items {
         @XmlElement(name = "item")
-        private List<Item> item;
+        private List<Item2> item2;
     }
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Item {
+    public static class Item2 {
         // 기관명
         @XmlElement(name = "dutyName")
         private String dutyName;
