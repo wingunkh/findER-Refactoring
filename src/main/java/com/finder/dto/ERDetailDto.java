@@ -26,11 +26,13 @@ public class ERDetailDto {
 
     private Double longitude; // 경도
 
+    private String subject; // 진료 과목
+
     private Integer count; // 병상 수
 
-    private Double distance;
+    private Double distance; // 거리
 
-    private String arrivalTime;
+    private String arrivalTime; // 도착 예정 시간
 
     private BedDataDto bedDataDto;
 }

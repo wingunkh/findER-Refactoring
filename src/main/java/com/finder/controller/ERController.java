@@ -26,7 +26,7 @@ public class ERController {
 
     // 응급실 상세정보 조회
     @GetMapping("/detail/{hpID}")
-    public ResponseEntity<Object> findHospitalDetail(@PathVariable String hpID, @RequestParam Double lat, @RequestParam Double lon) {
-        return ERService.findHospitalDetail(hpID, lat, lon);
+    public ResponseEntity<Object> findERDetail(@PathVariable String hpID, @RequestParam Double lat, @RequestParam Double lon) {
+        return ERService.findERDetail(hpID, lat, lon);
     }
 }

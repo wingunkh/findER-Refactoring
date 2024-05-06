@@ -53,10 +53,14 @@ public class XmlModel2 {
 
         // 병원 경도
         @XmlElement(name = "wgs84Lon")
-        private String wgs84Lon;
+        private Double wgs84Lon;
 
         // 병원 위도
         @XmlElement(name = "wgs84Lat")
-        private String wgs84Lat;
+        private Double wgs84Lat;
+
+        // 진료 과목
+        @XmlElement(name = "dgidIdName")
+        private String dgidIdName;
     }
 }
