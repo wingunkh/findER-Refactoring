@@ -1,4 +1,4 @@
-package com.finder.API;
+package com.finder.api;
 
 import com.finder.domain.Bed;
 import com.finder.domain.ER;
@@ -96,7 +96,9 @@ public class PublicDataAPIService extends APIService{
                         .ERTel(item2List.get(0).getDutyTel3())
                         .ambulance(item1.getHvamyn())
                         .CT(item1.getHvctayn())
-                        .MRI(item1.getHvmriayn()).build();
+                        .MRI(item1.getHvmriayn())
+                        .subject(item2List.get(0).getDgidIdName())
+                        .build();
 
                 ERRepository.save(er);
             }

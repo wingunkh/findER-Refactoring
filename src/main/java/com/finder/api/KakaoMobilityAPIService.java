@@ -1,4 +1,4 @@
-package com.finder.API;
+package com.finder.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
