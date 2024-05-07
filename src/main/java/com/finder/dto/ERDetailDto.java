@@ -30,6 +30,8 @@ public class ERDetailDto {
 
     private Integer bedCount; // 병상 수
 
+    private String bedTime; // 병상 수 갱신 시간 (yy/MM/dd HH:mm)
+
     private Double distance; // 거리
 
     private String arrivalTime; // 도착 예정 시간

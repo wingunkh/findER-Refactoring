@@ -48,11 +48,11 @@ public class ERService {
 
         ER er = optionalER.get();
 
-        // 병상 수 조회
-        Integer bedCount = bedService.getBedCount(er.getHpID());
+        // 병상 수, 병상 갱신 시간 조회
+        Map<String, Object> map1 = bedService.getBedCountAndBedTime(hpID);
 
         // 거리, 도착 예정 시간 조회
-        Map<String, String> map = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
+        Map<String, String> map2 = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
 
         ERPreviewDto erPreviewDto = ERPreviewDto.builder()
                 .hpID(er.getHpID())
@@ -60,9 +60,10 @@ public class ERService {
                 .address(er.getAddress())
                 .tel(er.getTel())
                 .ERTel(er.getERTel())
-                .bedCount(bedCount)
-                .distance(Double.parseDouble(map.get("distance")))
-                .arrivalTime(map.get("arriveTime"))
+                .bedCount((Integer) map1.get("bedCount"))
+                .bedTime((String) map1.get("bedTime"))
+                .distance(Double.parseDouble(map2.get("distance")))
+                .arrivalTime(map2.get("arriveTime"))
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(erPreviewDto);
@@ -78,8 +79,8 @@ public class ERService {
 
         ER er = optionalER.get();
 
-        // 병상 수 조회
-        Integer bedCount = bedService.getBedCount(er.getHpID());
+        // 병상 수, 병상 갱신 시간 조회
+        Map<String, Object> map1 = bedService.getBedCountAndBedTime(hpID);
 
         // 거리, 도착 예정 시간 조회
         Map<String, String> map = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
@@ -96,7 +97,8 @@ public class ERService {
                 .latitude(er.getLatitude())
                 .longitude(er.getLongitude())
                 .subject(er.getSubject())
-                .bedCount(bedCount)
+                .bedCount((Integer) map1.get("bedCount"))
+                .bedTime((String) map1.get("bedTime"))
                 .distance(Double.parseDouble(map.get("distance")))
                 .arrivalTime(map.get("arriveTime"))
                 .build();
