@@ -28,11 +28,9 @@ public class ERDetailDto {
 
     private String subject; // 진료 과목
 
-    private Integer count; // 병상 수
+    private Integer bedCount; // 병상 수
 
     private Double distance; // 거리
 
     private String arrivalTime; // 도착 예정 시간
-
-    private BedDataDto bedDataDto;
 }

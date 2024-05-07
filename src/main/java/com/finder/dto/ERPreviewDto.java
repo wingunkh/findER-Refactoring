@@ -16,7 +16,7 @@ public class ERPreviewDto {
 
     private String ERTel; // 응급실 연락처
 
-    private Integer count; // 병상 수
+    private Integer bedCount; // 병상 수
 
     private Double distance; // 거리
 

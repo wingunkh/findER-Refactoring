@@ -2,7 +2,6 @@ package com.finder.service;
 
 import com.finder.api.KakaoMobilityAPIService;
 import com.finder.domain.ER;
-import com.finder.dto.BedDataDto;
 import com.finder.dto.ERDetailDto;
 import com.finder.dto.ERPreviewDto;
 import com.finder.dto.MarkerResponseDto;
@@ -15,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ERService {
     private final ERRepository ERRepository;
     private final BedService bedService;
     private final KakaoMobilityAPIService kakaoMobilityAPIService;
 
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> findNearbyER(Double swLat, Double swLon, Double neLat, Double neLon) {
         List<ER> erList = ERRepository.findByLatitudeBetweenAndLongitudeBetween(swLat, swLon, neLat, neLon);
         List<MarkerResponseDto> markerResponseDtoList = new ArrayList<>();
@@ -30,7 +29,8 @@ public class ERService {
             MarkerResponseDto markerResponseDto = MarkerResponseDto.builder()
                     .hpID(er.getHpID())
                     .lat(er.getLatitude())
-                    .lon(er.getLongitude()).build();
+                    .lon(er.getLongitude())
+                    .build();
 
             markerResponseDtoList.add(markerResponseDto);
         }
@@ -38,6 +38,7 @@ public class ERService {
         return ResponseEntity.status(HttpStatus.OK).body(markerResponseDtoList);
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> findERPreview(String hpID, Double lat, Double lon) {
         Optional<ER> optionalER = ERRepository.findById(hpID);
 
@@ -46,12 +47,9 @@ public class ERService {
         }
 
         ER er = optionalER.get();
-        // 병상 수 조회
-        Integer hvec = bedService.findByNameAndTime(er.getName());
 
-        if (hvec == null || hvec < 0) {
-            hvec = 0;
-        }
+        // 병상 수 조회
+        Integer bedCount = bedService.getBedCount(er.getHpID());
 
         // 거리, 도착 예정 시간 조회
         Map<String, String> map = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
@@ -62,13 +60,15 @@ public class ERService {
                 .address(er.getAddress())
                 .tel(er.getTel())
                 .ERTel(er.getERTel())
-                .count(hvec)
+                .bedCount(bedCount)
                 .distance(Double.parseDouble(map.get("distance")))
-                .arrivalTime(map.get("arriveTime")).build();
+                .arrivalTime(map.get("arriveTime"))
+                .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(erPreviewDto);
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> findERDetail(String hpID, Double lat, Double lon) {
         Optional<ER> optionalER = ERRepository.findById(hpID);
 
@@ -78,8 +78,9 @@ public class ERService {
 
         ER er = optionalER.get();
 
-        // 병상 데이터 조회
-        BedDataDto bedDataDto = bedService.findByRecentV2(er.getName());
+        // 병상 수 조회
+        Integer bedCount = bedService.getBedCount(er.getHpID());
+
         // 거리, 도착 예정 시간 조회
         Map<String, String> map = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
 
@@ -95,10 +96,10 @@ public class ERService {
                 .latitude(er.getLatitude())
                 .longitude(er.getLongitude())
                 .subject(er.getSubject())
-                .count(Math.max(0, bedDataDto.getTwoAgoList().get(8)))
+                .bedCount(bedCount)
                 .distance(Double.parseDouble(map.get("distance")))
                 .arrivalTime(map.get("arriveTime"))
-                .bedDataDto(bedDataDto).build();
+                .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(ERDetailDto);
     }

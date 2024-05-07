@@ -26,7 +26,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @EnableScheduling
-public class PublicDataAPIService extends APIService{
+public class PublicDataAPIService extends APIService {
     @Value("${api.key}")
     private String key;
     Logger logger = LoggerFactory.getLogger(PublicDataAPIService.class);
@@ -41,7 +41,7 @@ public class PublicDataAPIService extends APIService{
     public void updateBedsCountEveryMinute() {
         long startTime = System.currentTimeMillis();
         LocalDateTime localDateTime = LocalDateTime.now();
-        String time = localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        String time = localDateTime.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm"));
 
         try {
             List<XmlModel1.Item1> item1List = getEmergencyRoomData();
@@ -51,7 +51,6 @@ public class PublicDataAPIService extends APIService{
                 Bed bed = Bed.builder()
                         .hpID(item1.getHpid())
                         .time(time)
-                        .localDateTime(localDateTime)
                         .count(item1.getHvec()).build();
 
                 bedList.add(bed);
@@ -60,7 +59,7 @@ public class PublicDataAPIService extends APIService{
             bedRepository.saveAll(bedList);
             logger.info(time + " updateBedsCountEveryMinute() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
         } catch (Exception e) {
-            errorHandling(time);
+            logger.error("updateBedsCountEveryMinute() Error", e);
         }
     }
 
@@ -138,17 +137,5 @@ public class PublicDataAPIService extends APIService{
         }
 
         return item1List;
-    }
-
-    private void errorHandling(String time) {
-        long startTime = System.currentTimeMillis();
-
-        for (Bed bed : bedList) {
-            bed.increaseByOneMinute();
-            bed.setLocalDateTime(bed.getLocalDateTime().plusMinutes(1));
-        }
-
-        bedRepository.saveAll(bedList);
-        logger.info(time + " errorHandler() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
     }
 }
