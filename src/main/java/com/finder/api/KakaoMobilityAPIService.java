@@ -43,7 +43,7 @@ public class KakaoMobilityAPIService extends APIService{
         Map<String, Object> routesMap = routes.get(0); // 첫번째 경로 선택
         Map<String, Object> summaryMap = (Map<String, Object>) routesMap.get("summary"); // 경로 요약 정보
 
-        Double distance = ((Double) summaryMap.get("distance")); // 거리(미터)
+        Double distance = (Double) summaryMap.get("distance"); // 거리(미터)
         Integer duration = (Integer) summaryMap.get("duration"); // 목적지까지 소요 시간(초)
 
         // 거리, 도착 예정 시간 계산 후 저장
