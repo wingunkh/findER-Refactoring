@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/account")
 public class AccountController {
     private final AccountService accountService;
 
@@ -27,8 +27,8 @@ public class AccountController {
     }
 
     // 시리얼 번호 조회
-    @GetMapping("/{phoneNumber}")
-    public ResponseEntity<Object> findSerialNumber(@PathVariable String phoneNumber) {
+    @GetMapping("/serialNumber")
+    public ResponseEntity<Object> findSerialNumber(@RequestBody String phoneNumber) {
         return accountService.findSerialNumber(phoneNumber);
     }
 

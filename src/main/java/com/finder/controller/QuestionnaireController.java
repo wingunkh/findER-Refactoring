@@ -19,8 +19,8 @@ public class QuestionnaireController {
     }
 
     // 접근 가능한 문진표 조회
-    @GetMapping("/{phoneNumber}")
-    public ResponseEntity<Object> findAccessibleQuestionnaires(@PathVariable String phoneNumber) {
+    @GetMapping
+    public ResponseEntity<Object> findAccessibleQuestionnaires(@RequestBody String phoneNumber) {
         return questionnaireService.findAccessibleQuestionnaires(phoneNumber);
     }
 
@@ -31,8 +31,8 @@ public class QuestionnaireController {
     }
 
     // 문진표 삭제
-    @DeleteMapping("/{phoneNumber}")
-    public ResponseEntity<Object> deleteQuestionnaire(@PathVariable String phoneNumber) {
+    @DeleteMapping
+    public ResponseEntity<Object> deleteQuestionnaire(@RequestBody String phoneNumber) {
         return questionnaireService.deleteQuestionnaire(phoneNumber);
     }
 }
