@@ -90,6 +90,8 @@ public class PublicDataAPIService extends APIService {
                         .ambulance(item1.getHvamyn())
                         .CT(item1.getHvctayn())
                         .MRI(item1.getHvmriayn())
+                        .latitude(item2List.get(0).getWgs84Lat())
+                        .longitude(item2List.get(0).getWgs84Lon())
                         .subject(item2List.get(0).getDgidIdName())
                         .build();
 
