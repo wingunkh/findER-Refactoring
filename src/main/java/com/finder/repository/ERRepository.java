@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface ERRepository extends JpaRepository<ER, String> {
-    List<ER> findByLatitudeBetweenAndLongitudeBetween(Double southWestLat, Double northEastLat, Double southWestLon, Double northEastLon);
+    List<ER> findByLatitudeBetweenAndLongitudeBetween(Double swLat, Double neLat, Double swLon, Double neLon);
 }

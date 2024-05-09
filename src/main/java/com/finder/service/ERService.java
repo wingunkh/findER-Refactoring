@@ -22,7 +22,7 @@ public class ERService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<Object> findNearbyER(Double swLat, Double swLon, Double neLat, Double neLon) {
-        List<ER> erList = ERRepository.findByLatitudeBetweenAndLongitudeBetween(swLat, swLon, neLat, neLon);
+        List<ER> erList = ERRepository.findByLatitudeBetweenAndLongitudeBetween(swLat, neLat, swLon, neLon);
         List<MarkerResponseDto> markerResponseDtoList = new ArrayList<>();
 
         for (ER er : erList) {
