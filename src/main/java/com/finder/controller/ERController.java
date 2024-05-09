@@ -12,8 +12,8 @@ public class ERController {
     private final ERService ERService;
 
     // 사용자 주변 응급실 조회
-    @GetMapping("/nearBy/{swLat}/{swLon}/{neLat}/{neLon}")
-    public ResponseEntity<Object> findNearbyER(@PathVariable Double swLat, @PathVariable Double swLon, @PathVariable Double neLat, @PathVariable Double neLon) {
+    @GetMapping("/nearBy")
+    public ResponseEntity<Object> findNearbyER(@RequestParam Double swLat, @RequestParam Double swLon, @RequestParam Double neLat, @RequestParam Double neLon) {
         return ERService.findNearbyER(swLat, swLon, neLat, neLon);
     }
 

@@ -27,8 +27,8 @@ public class AccountController {
     }
 
     // 시리얼 번호 조회
-    @GetMapping("/serialNumber")
-    public ResponseEntity<Object> findSerialNumber(@RequestBody String phoneNumber) {
+    @GetMapping("/serialNumber/{phoneNumber}")
+    public ResponseEntity<Object> findSerialNumber(@PathVariable String phoneNumber) {
         return accountService.findSerialNumber(phoneNumber);
     }
 
