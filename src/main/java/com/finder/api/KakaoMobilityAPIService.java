@@ -36,14 +36,17 @@ public class KakaoMobilityAPIService extends APIService{
         }
 
         if (jsonObject == null) {
-            return null;
+            map.put("distance", "error");
+            map.put("ETA", "error");
+
+            return map;
         }
 
-        ArrayList<Map<String, Object>> routes = (ArrayList<Map<String, Object>>) jsonObject.get("routes"); // 경로 정보
-        Map<String, Object> routesMap = routes.get(0); // 첫번째 경로 선택
-        Map<String, Object> summaryMap = (Map<String, Object>) routesMap.get("summary"); // 경로 요약 정보
+        ArrayList<HashMap<String, Object>> routes = (ArrayList) jsonObject.get("routes"); // 경로 정보
+        HashMap<String, Object> routesMap = routes.get(0); // 첫번째 경로 선택
+        HashMap<String, Object> summaryMap = (HashMap<String, Object>) routesMap.get("summary"); // 경로 요약 정보
 
-        Double distance = (Double) summaryMap.get("distance"); // 거리(미터)
+        Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(미터)
         Integer duration = (Integer) summaryMap.get("duration"); // 목적지까지 소요 시간(초)
 
         // 거리, 도착 예정 시간 계산 후 저장

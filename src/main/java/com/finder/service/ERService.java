@@ -63,7 +63,7 @@ public class ERService {
                 .bedCount((Integer) map1.get("bedCount"))
                 .bedTime((String) map1.get("bedTime"))
                 .distance(Double.parseDouble(map2.get("distance")))
-                .arrivalTime(map2.get("arriveTime"))
+                .ETA(map2.get("ETA"))
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(erPreviewDto);
@@ -100,7 +100,7 @@ public class ERService {
                 .bedCount((Integer) map1.get("bedCount"))
                 .bedTime((String) map1.get("bedTime"))
                 .distance(Double.parseDouble(map.get("distance")))
-                .arrivalTime(map.get("arriveTime"))
+                .ETA(map.get("ETA"))
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(ERDetailDto);

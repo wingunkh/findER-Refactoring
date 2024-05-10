@@ -34,5 +34,5 @@ public class ERDetailDto {
 
     private Double distance; // 거리
 
-    private String arrivalTime; // 도착 예정 시간
+    private String ETA; // 도착 예정 시간
 }
