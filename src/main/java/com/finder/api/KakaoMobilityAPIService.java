@@ -35,16 +35,16 @@ public class KakaoMobilityAPIService extends APIService{
             logger.error("getDistanceAndETA() Error", e);
         }
 
-        if (jsonObject == null) {
-            map.put("distance", "error");
-            map.put("ETA", "error");
-
-            return map;
-        }
-
         ArrayList<HashMap<String, Object>> routes = (ArrayList) jsonObject.get("routes"); // 경로 정보
         HashMap<String, Object> routesMap = routes.get(0); // 첫번째 경로 선택
         HashMap<String, Object> summaryMap = (HashMap<String, Object>) routesMap.get("summary"); // 경로 요약 정보
+
+        if (summaryMap == null) {
+            map.put("distance", "0");
+            map.put("ETA", "0");
+
+            return map;
+        }
 
         Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(미터)
         Integer duration = (Integer) summaryMap.get("duration"); // 목적지까지 소요 시간(초)
