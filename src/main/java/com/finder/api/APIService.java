@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public abstract class APIService {
@@ -25,9 +26,9 @@ public abstract class APIService {
         BufferedReader bufferedReader;
 
         if (responseCode >= 200 && responseCode < 300) {
-            bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
         } else {
-            bufferedReader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
         }
 
         // 응답 데이터를 저장하기 위한 StringBuilder 객체 초기화
