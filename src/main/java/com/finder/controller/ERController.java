@@ -11,10 +11,16 @@ import org.springframework.web.bind.annotation.*;
 public class ERController {
     private final ERService ERService;
 
-    // 사용자 주변 응급실 조회
-    @GetMapping("/nearBy")
-    public ResponseEntity<Object> findNearbyER(@RequestParam Double swLat, @RequestParam Double swLon, @RequestParam Double neLat, @RequestParam Double neLon) {
-        return ERService.findNearbyER(swLat, swLon, neLat, neLon);
+//    // 사용자 주변 응급실 조회
+//    @GetMapping("/nearBy")
+//    public ResponseEntity<Object> findNearbyER(@RequestParam Double swLat, @RequestParam Double swLon, @RequestParam Double neLat, @RequestParam Double neLon) {
+//        return ERService.findNearbyER(swLat, swLon, neLat, neLon);
+//    }
+
+    // 전체 응급실 위치 정보 조회
+    @GetMapping("/location")
+    public ResponseEntity<Object> findAllERLocation() {
+        return ERService.findAllERLocation();
     }
 
     // 응급실 프리뷰

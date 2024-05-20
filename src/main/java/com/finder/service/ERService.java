@@ -20,9 +20,27 @@ public class ERService {
     private final BedService bedService;
     private final KakaoMobilityAPIService kakaoMobilityAPIService;
 
+//    @Transactional(readOnly = true)
+//    public ResponseEntity<Object> findNearbyER(Double swLat, Double swLon, Double neLat, Double neLon) {
+//        List<ER> erList = ERRepository.findByLatitudeBetweenAndLongitudeBetween(swLat, neLat, swLon, neLon);
+//        List<MarkerResponseDto> markerResponseDtoList = new ArrayList<>();
+//
+//        for (ER er : erList) {
+//            MarkerResponseDto markerResponseDto = MarkerResponseDto.builder()
+//                    .hpID(er.getHpID())
+//                    .lat(er.getLatitude())
+//                    .lon(er.getLongitude())
+//                    .build();
+//
+//            markerResponseDtoList.add(markerResponseDto);
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(markerResponseDtoList);
+//    }
+
     @Transactional(readOnly = true)
-    public ResponseEntity<Object> findNearbyER(Double swLat, Double swLon, Double neLat, Double neLon) {
-        List<ER> erList = ERRepository.findByLatitudeBetweenAndLongitudeBetween(swLat, neLat, swLon, neLon);
+    public ResponseEntity<Object> findAllERLocation() {
+        List<ER> erList = ERRepository.findAll();
         List<MarkerResponseDto> markerResponseDtoList = new ArrayList<>();
 
         for (ER er : erList) {
