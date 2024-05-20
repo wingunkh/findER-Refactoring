@@ -35,5 +35,6 @@ public class ER {
 
     private Double longitude; // 경도
 
+    @Column(length = 800)
     private String subject; // 진료 과목
 }
