@@ -1,8 +1,8 @@
 package com.finder.domain;
 
 import lombok.*;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity
 @AllArgsConstructor

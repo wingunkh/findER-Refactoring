@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class KakaoMobilityAPIService extends APIService{
+public class KakaoMobilityAPIService extends APIService {
     @Value("${kakao.key}")
     private String key;
     private final Logger logger = LoggerFactory.getLogger(KakaoMobilityAPIService.class);
