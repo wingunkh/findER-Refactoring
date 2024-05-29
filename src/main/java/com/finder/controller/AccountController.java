@@ -5,6 +5,8 @@ import com.finder.dto.UnlinkRequestDto;
 import com.finder.dto.LinkRequestDto;
 import com.finder.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,30 +19,60 @@ public class AccountController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody AccountRequestDto accountRequestDto) {
-        return accountService.signup(accountRequestDto);
+        try {
+            accountService.signup(accountRequestDto);
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody AccountRequestDto accountRequestDto) {
-        return accountService.login(accountRequestDto);
+        try {
+            accountService.login(accountRequestDto);
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
     // 시리얼 번호 조회
     @GetMapping("/serialNumber/{phoneNumber}")
     public ResponseEntity<Object> findSerialNumber(@PathVariable String phoneNumber) {
-        return accountService.findSerialNumber(phoneNumber);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(accountService.findSerialNumber(phoneNumber));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // 연동
     @PostMapping("/link")
     public ResponseEntity<Object> link(@RequestBody LinkRequestDto linkRequestDto) {
-        return accountService.link(linkRequestDto);
+        try {
+            accountService.link(linkRequestDto);
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     // 연동 취소
     @PostMapping("/unlink")
     public ResponseEntity<Object> unlink(@RequestBody UnlinkRequestDto unlinkRequestDto) {
-        return accountService.unlink(unlinkRequestDto);
+        try {
+            accountService.unlink(unlinkRequestDto);
+
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
