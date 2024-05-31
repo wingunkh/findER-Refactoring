@@ -24,7 +24,7 @@ public class AccountService {
     @Transactional
     public void signup(AccountRequestDto accountRequestDto) {
         if (accountRepository.findById(accountRequestDto.phoneNumber).isPresent()) {
-            throw new DataIntegrityViolationException("이미 가입된 회원이 존재합니다.");
+            throw new DataIntegrityViolationException("이미 회원입니다.");
         }
 
         String salt = SHAUtil.getSalt();
@@ -62,13 +62,13 @@ public class AccountService {
         Account account2 = accountRepository.findBySerialNumber(linkRequestDto.getLinkedSerialNumber());
 
         if (Objects.isNull(account2)) {
-            throw new IllegalArgumentException("존재하지 않는 일련번호입니다.");
+            throw new IllegalArgumentException("유효하지 않은 일련번호입니다.");
         }
 
         Link existingLink = linkRepository.findByAccount1PhoneNumberAndAccount2PhoneNumber(account1.getPhoneNumber(), account2.getPhoneNumber());
 
         if (existingLink != null) {
-            throw new DataIntegrityViolationException("이미 연동된 상태입니다.");
+            throw new DataIntegrityViolationException("이미 연동 상태입니다.");
         }
 
         Link link1 = Link.builder()
