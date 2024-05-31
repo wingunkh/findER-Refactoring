@@ -2,6 +2,7 @@ package com.finder.controller;
 
 import com.finder.service.ERService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,30 +10,32 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/er")
 public class ERController {
-    private final ERService ERService;
-
-//    // 사용자 주변 응급실 조회
-//    @GetMapping("/nearBy")
-//    public ResponseEntity<Object> findNearbyER(@RequestParam Double swLat, @RequestParam Double swLon, @RequestParam Double neLat, @RequestParam Double neLon) {
-//        return ERService.findNearbyER(swLat, swLon, neLat, neLon);
-//    }
+    private final ERService erService;
 
     // 전체 응급실 위치 정보 조회
     @GetMapping("/location")
     public ResponseEntity<Object> findAllERLocation() {
-        return ERService.findAllERLocation();
+        return ResponseEntity.status(HttpStatus.OK).body(erService.findAllERLocation());
     }
 
     // 응급실 프리뷰
     @GetMapping("/preview/{hpID}")
     public ResponseEntity<Object> findERPreview(@PathVariable String hpID, @RequestParam Double lat, @RequestParam Double lon) {
-        return ERService.findERPreview(hpID, lat, lon);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(erService.findERPreview(hpID, lat, lon));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 
     // 응급실 상세정보 조회
     @GetMapping("/detailView/{hpID}")
     public ResponseEntity<Object> findERDetail(@PathVariable String hpID, @RequestParam Double lat, @RequestParam Double lon) {
-        return ERService.findERDetail(hpID, lat, lon);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(erService.findERDetail(hpID, lat, lon));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
