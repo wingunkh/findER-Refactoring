@@ -8,13 +8,10 @@ import com.finder.repository.AccountRepository;
 import com.finder.repository.LinkRepository;
 import com.finder.repository.QuestionnaireRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +21,13 @@ public class QuestionnaireService {
     private final LinkRepository linkRepository;
 
     @Transactional
-    public ResponseEntity<Object> writeQuestionnaire(QuestionnaireDto questionnaireDto) {
-        Optional<Account> optionalAccount = accountRepository.findById(questionnaireDto.getPhoneNumber());
-
-        if (optionalAccount.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
-        }
+    public void writeQuestionnaire(QuestionnaireDto questionnaireDto) {
+        Account account = accountRepository.findById(questionnaireDto.getPhoneNumber())
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
 
         Questionnaire questionnaire = Questionnaire.builder()
                 .phoneNumber(questionnaireDto.getPhoneNumber())
-                .account(optionalAccount.get())
+                .account(account)
                 .name(questionnaireDto.getName())
                 .age(questionnaireDto.getAge())
                 .gender(questionnaireDto.getGender())
@@ -49,40 +43,33 @@ public class QuestionnaireService {
                 .build();
 
         questionnaireRepository.save(questionnaire);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("문진표 작성에 성공하였습니다.");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<Object> findAccessibleQuestionnaires(String phoneNumber) {
+    public List<QuestionnaireDto> findAccessibleQuestionnaires(String phoneNumber) {
         // 접근 가능 문진표 리스트 = 자신의 문진표 + 연동된 상대방의 문진표
         List<QuestionnaireDto> questionnaireDtoList = new ArrayList<>();
 
-        // 자신의 문진표
-        Optional<Questionnaire> optionalMyQuestionnaire = questionnaireRepository.findById(phoneNumber);
-        optionalMyQuestionnaire.ifPresent(questionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(questionnaire)));
+        // 자신의 문진표 추가
+        questionnaireRepository.findById(phoneNumber)
+                .ifPresent(myQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(myQuestionnaire)));
 
-        // 연동 정보 리스트
+        // 연동된 상대방의 문진표 추가
         List<Link> linkList = linkRepository.findAllByAccount1PhoneNumber(phoneNumber);
 
         for (Link link : linkList) {
-            // 연동된 상대방의 문진표
-            Optional<Questionnaire> optionalLinkedQuestionnaire = questionnaireRepository.findById(link.getAccount2().getPhoneNumber());
-            optionalLinkedQuestionnaire.ifPresent(questionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(questionnaire)));
+            questionnaireRepository.findById(link.getAccount2().getPhoneNumber())
+                    .ifPresent(linkedQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(linkedQuestionnaire)));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(questionnaireDtoList);
+        return questionnaireDtoList;
     }
 
     @Transactional
-    public ResponseEntity<Object> updateQuestionnaire(QuestionnaireDto questionnaireDto) {
-        Optional<Questionnaire> optionalQuestionnaire = questionnaireRepository.findById(questionnaireDto.getPhoneNumber());
+    public void updateQuestionnaire(QuestionnaireDto questionnaireDto) {
+        Questionnaire questionnaire = questionnaireRepository.findById(questionnaireDto.getPhoneNumber())
+                .orElseThrow(() -> new IllegalArgumentException("문진표가 존재하지 않습니다."));
 
-        if (optionalQuestionnaire.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
-        }
-
-        Questionnaire questionnaire = optionalQuestionnaire.get();
         questionnaire.setName(questionnaireDto.getName());
         questionnaire.setAge(questionnaireDto.getAge());
         questionnaire.setGender(questionnaireDto.getGender());
@@ -99,20 +86,13 @@ public class QuestionnaireService {
         // questionnaireRepository.save(questionnaire);
         // 영속성 컨텍스트의 Dirty Checking 기능을 통해 변경된 엔티티의 상태가 감지된다.
         // 그 후 트랜잭션 커밋 시 해당 변경 사항이 데이터베이스에 반영되어 업데이트가 자동으로 수행된다.
-
-        return ResponseEntity.status(HttpStatus.OK).body("문진표 수정에 성공하였습니다.");
     }
 
     @Transactional
-    public ResponseEntity<Object> deleteQuestionnaire(String phoneNumber) {
-        Optional<Questionnaire> optionalQuestionnaire = questionnaireRepository.findById(phoneNumber);
+    public void deleteQuestionnaire(String phoneNumber) {
+        Questionnaire questionnaire = questionnaireRepository.findById(phoneNumber)
+                .orElseThrow(() -> new IllegalArgumentException("문진표가 존재하지 않습니다."));
 
-        if (optionalQuestionnaire.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
-        }
-
-        questionnaireRepository.delete(optionalQuestionnaire.get());
-
-        return ResponseEntity.status(HttpStatus.OK).body("문진표 삭제에 성공하였습니다.");
+        questionnaireRepository.delete(questionnaire);
     }
 }
