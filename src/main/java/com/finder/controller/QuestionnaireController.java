@@ -19,7 +19,7 @@ public class QuestionnaireController {
         try {
             questionnaireService.writeQuestionnaire(questionnaireDto);
 
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
