@@ -1,6 +1,5 @@
 plugins {
 	id 'java'
-	// id 'org.springframework.boot' version '2.7.13'
 	id 'org.springframework.boot' version '3.0.0'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
@@ -23,17 +22,26 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot Data JPA 스타터: JPA를 사용하여 데이터베이스와 상호작용하기 위한 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// Spring Boot Web 스타터: 웹 애플리케이션 개발을 위한 기본적인 설정과 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// Google Guava: 자바 유틸리티 라이브러리
 	implementation 'com.google.guava:guava:33.0.0-jre'
+	// JSON-Simple: JSON 데이터를 처리하기 위한 라이브러리
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+	// Jakarta XML Binding API: JAXB (Java Architecture for XML Binding) API
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.0'
+	// JAXB 런타임: XML 바인딩을 수행하기 위한 런타임 라이브러리
 	implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.0'
 
+	// Lombok: 보일러플레이트 코드를 줄이기 위한 어노테이션 프로세서 (컴파일 타임에만 필요)
 	compileOnly 'org.projectlombok:lombok'
+	// Oracle JDBC 드라이버: Oracle 데이터베이스와 연결하기 위한 JDBC 드라이버
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
-	runtimeOnly 'com.h2database:h2'
+	// Lombok: 보일러플레이트 코드를 줄이기 위한 어노테이션 프로세서 (컴파일 시 어노테이션 처리)
 	annotationProcessor 'org.projectlombok:lombok'
+	// Spring Boot Test 스타터: 스프링 부트 애플리케이션 테스트를 위한 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
