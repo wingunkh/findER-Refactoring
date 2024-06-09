@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,15 +25,17 @@ public class KakaoMobilityAPIService extends APIService {
                 "&destination=" + destinationLon + "," + destinationLat +
                 "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false&alternatives=false&road_details=false";
 
+        JSONObject jsonObject;
         ObjectMapper mapper = new ObjectMapper();
-        JSONObject jsonObject = null;
+        String data = sendHttpRequest(urlString, key);
 
         try {
-            String data = sendHttpRequest(urlString, key);
             // JSON 데이터를 Map으로 변환
             jsonObject = mapper.readValue(data, JSONObject.class);
-        } catch (Exception e) {
-            logger.error("getDistanceAndETA() Error", e);
+        } catch (IOException e) {
+            logger.error("JSON Mapping Error", e);
+
+            throw new RuntimeException(e.toString(), e);
         }
 
         ArrayList<HashMap<String, Object>> routes = (ArrayList) jsonObject.get("routes"); // 경로 정보
