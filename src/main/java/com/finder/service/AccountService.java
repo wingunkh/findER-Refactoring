@@ -96,7 +96,7 @@ public class AccountService {
         linkRepository.deleteByAccount1PhoneNumberAndAccount2PhoneNumber(account2.getPhoneNumber(), account1.getPhoneNumber());
     }
 
-    public String generateSerialNumber() {
+    private String generateSerialNumber() {
         StringBuilder sb = new StringBuilder();
         SecureRandom random = new SecureRandom();
         final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
