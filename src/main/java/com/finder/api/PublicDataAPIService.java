@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -41,21 +43,25 @@ public class PublicDataAPIService extends APIService {
         LocalDateTime localDateTime = LocalDateTime.now();
         String time = localDateTime.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm"));
 
-        List<XmlModel1.Item1> item1List = getBedCount();
-        List<Bed> bedList = new ArrayList<>();
+        try {
+            List<XmlModel1.Item1> item1List = getBedCount();
+            List<Bed> bedList = new ArrayList<>();
 
-        for (XmlModel1.Item1 item1 : item1List) {
-            Bed bed = Bed.builder()
-                    .hpID(item1.getHpid())
-                    .time(time)
-                    .count(item1.getHvec())
-                    .build();
+            for (XmlModel1.Item1 item1 : item1List) {
+                Bed bed = Bed.builder()
+                        .hpID(item1.getHpid())
+                        .time(time)
+                        .count(item1.getHvec())
+                        .build();
 
-            bedList.add(bed);
+                bedList.add(bed);
+            }
+
+            bedRepository.saveAll(bedList);
+            logger.info(time + " updateBedsCountEveryMinute() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
+        } catch (RuntimeException e) { // 예외 발생 시 무시
+            logger.error("updateBedCountEveryMinute() Error", e);
         }
-
-        bedRepository.saveAll(bedList);
-        logger.info(time + " updateBedsCountEveryMinute() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
     }
 
     // 응급의료기관 기본정보 갱신 (최초 실행 시)
@@ -63,51 +69,47 @@ public class PublicDataAPIService extends APIService {
         long startTime = System.currentTimeMillis();
         LocalDateTime localDateTime = LocalDateTime.now();
         String time = localDateTime.format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm"));
-
         String urlString = "https://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytBassInfoInqire" +
                 "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + key;
 
-        List<XmlModel1.Item1> item1List = getBedCount();
+        try {
+            List<XmlModel1.Item1> item1List = getBedCount();
 
-        for (XmlModel1.Item1 item1 : item1List) {
-            // 응급의료기관 기본정보 조회 API 호출
-            String xmlData = sendHttpRequest(urlString + "&" + URLEncoder.encode("HPID", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(item1.getHpid(), StandardCharsets.UTF_8), null);
+            for (XmlModel1.Item1 item1 : item1List) {
+                // 응급의료기관 기본정보 조회 API 호출
+                String xmlData = sendHttpRequest(urlString + "&" + URLEncoder.encode("HPID", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(item1.getHpid(), StandardCharsets.UTF_8), null);
 
-            // XML 데이터를 Java 객체로 변환 (언마샬링)
-            StringReader stringReader = new StringReader(xmlData);
-            XmlModel2 xmlModel2;
-
-            try {
+                // XML 데이터를 Java 객체로 변환 (언마샬링)
+                StringReader stringReader = new StringReader(xmlData);
                 JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel2.class);
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-                xmlModel2 = (XmlModel2) unmarshaller.unmarshal(stringReader);
-            } catch (JAXBException e) {
-                logger.error("JAXB Error", e);
+                XmlModel2 xmlModel2 = (XmlModel2) unmarshaller.unmarshal(stringReader);
+                List<XmlModel2.Item2> item2List = xmlModel2.getBody().getItems().getItem2();
 
-                throw new RuntimeException(e.toString(), e);
+                ER er = ER.builder()
+                        .hpID(item1.getHpid())
+                        .name(item2List.get(0).getDutyName())
+                        .address(item2List.get(0).getDutyAddr())
+                        .mapAddress(item2List.get(0).getDutyMapimg())
+                        .tel(item2List.get(0).getDutyTel1())
+                        .ERTel(item2List.get(0).getDutyTel3())
+                        .ambulance(item1.getHvamyn())
+                        .CT(item1.getHvctayn())
+                        .MRI(item1.getHvmriayn())
+                        .latitude(item2List.get(0).getWgs84Lat())
+                        .longitude(item2List.get(0).getWgs84Lon())
+                        .subject(item2List.get(0).getDgidIdName())
+                        .build();
+
+                erRepository.save(er);
             }
 
-            List<XmlModel2.Item2> item2List = xmlModel2.getBody().getItems().getItem2();
+            logger.info(time + " updateEmergencyRoomInfo() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
+        } catch (RuntimeException | JAXBException e) { // 예외 발생 시 RuntimeException throw (프로그램 종료)
+            logger.error("updateEmergencyRoomInfo() Error", e);
 
-            ER er = ER.builder()
-                    .hpID(item1.getHpid())
-                    .name(item2List.get(0).getDutyName())
-                    .address(item2List.get(0).getDutyAddr())
-                    .mapAddress(item2List.get(0).getDutyMapimg())
-                    .tel(item2List.get(0).getDutyTel1())
-                    .ERTel(item2List.get(0).getDutyTel3())
-                    .ambulance(item1.getHvamyn())
-                    .CT(item1.getHvctayn())
-                    .MRI(item1.getHvmriayn())
-                    .latitude(item2List.get(0).getWgs84Lat())
-                    .longitude(item2List.get(0).getWgs84Lon())
-                    .subject(item2List.get(0).getDgidIdName())
-                    .build();
-
-            erRepository.save(er);
+            throw new RuntimeException(e);
         }
-
-        logger.info(time + " updateEmergencyRoomInfo() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
     }
 
     // 응급실 실시간 가용병상정보 조회 API 호출
@@ -118,26 +120,25 @@ public class PublicDataAPIService extends APIService {
                 "&" + URLEncoder.encode("STAGE2", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("", StandardCharsets.UTF_8) + // 주소(시군구)
                 "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + // 페이지 번호
                 "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("410", StandardCharsets.UTF_8); // 목록 건수
-
-        String data = sendHttpRequest(urlString, null);
-
-        // XML 데이터를 Java 객체로 변환 (언마샬링)
-        StringReader stringReader = new StringReader(data);
-        XmlModel1 xmlModel1;
+        String data;
 
         try {
+            data = sendHttpRequest(urlString, null);
+
+            // XML 데이터를 Java 객체로 변환 (언마샬링)
+            StringReader stringReader = new StringReader(data);
             JAXBContext jaxbContext = JAXBContext.newInstance(XmlModel1.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            xmlModel1 = (XmlModel1) unmarshaller.unmarshal(stringReader);
-        } catch (JAXBException e) {
-            logger.error("JAXB Error", e);
+            XmlModel1 xmlModel1 = (XmlModel1) unmarshaller.unmarshal(stringReader);
+            List<XmlModel1.Item1> item1List = xmlModel1.getBody().getItems().getItem1();
 
-            throw new RuntimeException(e.toString(), e);
+            logger.info("Data 수 : {}", item1List.size());
+
+            return item1List;
+        } catch (RuntimeException | JAXBException e) { // 예외 발생 시 RuntimeException throw
+            logger.error("getBedCount() Error", e);
+
+            throw new RuntimeException(e);
         }
-
-        List<XmlModel1.Item1> item1List = xmlModel1.getBody().getItems().getItem1();
-        logger.info("Data 수 : {}", item1List.size());
-
-        return item1List;
     }
 }

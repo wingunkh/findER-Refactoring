@@ -24,38 +24,34 @@ public class KakaoMobilityAPIService extends APIService {
         String urlString = "https://apis-navi.kakaomobility.com/v1/directions?origin=" + originLon + "," + originLat +
                 "&destination=" + destinationLon + "," + destinationLat +
                 "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false&alternatives=false&road_details=false";
-
+        String data;
         JSONObject jsonObject;
         ObjectMapper mapper = new ObjectMapper();
-        String data = sendHttpRequest(urlString, key);
 
         try {
-            // JSON 데이터를 Map으로 변환
+            data = sendHttpRequest(urlString, key);
             jsonObject = mapper.readValue(data, JSONObject.class);
-        } catch (IOException e) {
-            logger.error("JSON Mapping Error", e);
+            ArrayList<HashMap<String, Object>> routes = (ArrayList<HashMap<String, Object>>) jsonObject.get("routes"); // 경로 정보
 
-            throw new RuntimeException(e.toString(), e);
+            if (!routes.isEmpty()) {
+                HashMap<String, Object> routesMap = routes.get(0); // 첫번째 경로 선택
+                HashMap<String, Object> summaryMap = (HashMap<String, Object>) routesMap.get("summary"); // 경로 요약 정보
+
+                if (summaryMap != null) {
+                    Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(미터)
+                    Integer duration = (Integer) summaryMap.get("duration"); // 목적지까지 소요 시간(초)
+
+                    // 거리, 도착 예정 시간 계산 후 저장
+                    calculate(distance, duration);
+
+                    return map;
+                }
+            }
+        } catch (RuntimeException | IOException e) {
+            logger.error("getDistanceAndETA() Error", e);
         }
 
-        ArrayList<HashMap<String, Object>> routes = (ArrayList) jsonObject.get("routes"); // 경로 정보
-        HashMap<String, Object> routesMap = routes.get(0); // 첫번째 경로 선택
-        HashMap<String, Object> summaryMap = (HashMap<String, Object>) routesMap.get("summary"); // 경로 요약 정보
-
-        if (summaryMap == null) {
-            map.put("distance", "0");
-            map.put("ETA", "0");
-
-            return map;
-        }
-
-        Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(미터)
-        Integer duration = (Integer) summaryMap.get("duration"); // 목적지까지 소요 시간(초)
-
-        // 거리, 도착 예정 시간 계산 후 저장
-        calculate(distance, duration);
-
-        return map;
+        return Map.of("distance", "0", "ETA", "0");
     }
 
     // 거리, 도착 예정 시간 계산
@@ -71,6 +67,10 @@ public class KakaoMobilityAPIService extends APIService {
         if (arriveMinute >= 60) {
             arriveHour += arriveMinute / 60;
             arriveMinute %= 60;
+        }
+
+        if (arriveHour >= 24) {
+            arriveHour %= 24;
         }
 
         String ETA = arriveHour >= 12 ?

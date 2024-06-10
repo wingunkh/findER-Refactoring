@@ -50,10 +50,10 @@ public abstract class APIService {
 
             // 읽은 응답 데이터를 문자열로 반환
             return stringBuilder.toString();
-        } catch (IOException e) {
+        } catch (IOException e) { // 예외 발생 시 RuntimeException throw
             logger.error("HTTP Request Error", e);
 
-            throw new RuntimeException(e.toString(), e);
+            throw new RuntimeException(e);
         } finally {
             if (bufferedReader != null) {
                 try {
