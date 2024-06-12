@@ -8,7 +8,7 @@ import java.util.Base64;
 public class SHAUtil {
     public static final SecureRandom random = new SecureRandom();
 
-    public static String getSalt() {
+    public static String generateSalt() {
         byte[] salt = new byte[32];
         random.nextBytes(salt);
 

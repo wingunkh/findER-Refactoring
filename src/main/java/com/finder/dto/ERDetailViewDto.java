@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ERDetailDto {
+public class ERDetailViewDto {
     private String name; // 응급실 이름
 
     private String address; // 주소

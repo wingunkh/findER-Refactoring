@@ -27,7 +27,7 @@ public class AccountService {
             throw new DataIntegrityViolationException("이미 회원입니다.");
         }
 
-        String salt = SHAUtil.getSalt();
+        String salt = SHAUtil.generateSalt();
         String encryptedRrn = SHAUtil.encryptWithSalt(accountRequestDto.rrn, salt);
         String serialNumber = generateSerialNumber();
 

@@ -2,7 +2,7 @@ package com.finder.service;
 
 import com.finder.api.KakaoMobilityAPIService;
 import com.finder.domain.ER;
-import com.finder.dto.ERDetailDto;
+import com.finder.dto.ERDetailViewDto;
 import com.finder.dto.ERPreviewDto;
 import com.finder.dto.MarkerResponseDto;
 import com.finder.repository.ERRepository;
@@ -54,7 +54,7 @@ public class ERService {
     }
 
     @Transactional(readOnly = true)
-    public ERDetailDto findERDetail(String hpID, Double lat, Double lon) {
+    public ERDetailViewDto findERDetail(String hpID, Double lat, Double lon) {
         ER er = erRepository.findById(hpID)
                 .orElseThrow(() -> new IllegalArgumentException("응급실이 존재하지 않습니다."));
 
@@ -63,7 +63,7 @@ public class ERService {
         // 거리, 도착 예정 시간 조회
         Map<String, String> distanceInfo = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
 
-        return ERDetailDto.builder()
+        return ERDetailViewDto.builder()
                 .name(er.getName())
                 .address(er.getAddress())
                 .mapAddress(er.getMapAddress() == null ? "" : er.getMapAddress())
