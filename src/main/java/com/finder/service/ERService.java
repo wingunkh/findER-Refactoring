@@ -38,7 +38,7 @@ public class ERService {
         // 병상 수, 병상 갱신 시간 조회
         Map<String, Object> bedInfo = bedService.getBedCountAndBedTime(hpID);
         // 거리, 도착 예정 시간 조회
-        Map<String, String> distanceInfo = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
+        Map<String, String> distanceAndDuration = kakaoMobilityAPIService.getDistanceAndDuration(lat, lon, er.getLatitude(), er.getLongitude());
 
         return ERPreviewDto.builder()
                 .hpID(er.getHpID())
@@ -48,8 +48,8 @@ public class ERService {
                 .ERTel(er.getERTel())
                 .bedCount((Integer) bedInfo.get("bedCount"))
                 .bedTime((String) bedInfo.get("bedTime"))
-                .distance(Double.parseDouble(distanceInfo.get("distance")))
-                .ETA(distanceInfo.get("ETA"))
+                .distance(Double.parseDouble(distanceAndDuration.get("distance")))
+                .duration(distanceAndDuration.get("duration"))
                 .build();
     }
 
@@ -61,7 +61,7 @@ public class ERService {
         // 병상 수, 병상 갱신 시간 조회
         Map<String, Object> bedInfo = bedService.getBedCountAndBedTime(hpID);
         // 거리, 도착 예정 시간 조회
-        Map<String, String> distanceInfo = kakaoMobilityAPIService.getDistanceAndETA(lat, lon, er.getLatitude(), er.getLongitude());
+        Map<String, String> distanceAndDuration = kakaoMobilityAPIService.getDistanceAndDuration(lat, lon, er.getLatitude(), er.getLongitude());
 
         return ERDetailViewDto.builder()
                 .name(er.getName())
@@ -77,8 +77,8 @@ public class ERService {
                 .subject(er.getSubject())
                 .bedCount((Integer) bedInfo.get("bedCount"))
                 .bedTime((String) bedInfo.get("bedTime"))
-                .distance(Double.parseDouble(distanceInfo.get("distance")))
-                .ETA(distanceInfo.get("ETA"))
+                .distance(Double.valueOf(distanceAndDuration.get("distance")))
+                .duration(distanceAndDuration.get("duration"))
                 .build();
     }
 }

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +16,10 @@ public class KakaoMobilityAPIService extends APIService {
     @Value("${kakao.key}")
     private String key;
     private final Logger logger = LoggerFactory.getLogger(KakaoMobilityAPIService.class);
-    private final Map<String, String> map = new HashMap<>();
+    private final Map<String, String> distanceAndDuration = new HashMap<>();
 
-    // 응급실 거리 & 예상 도착 시간 조회
-    public Map<String, String> getDistanceAndETA(Double originLat, Double originLon, Double destinationLat, Double destinationLon) {
+    // 응급실 거리 & 예상 이동 소요 시간 조회
+    public Map<String, String> getDistanceAndDuration(Double originLat, Double originLon, Double destinationLat, Double destinationLon) {
         String urlString = "https://apis-navi.kakaomobility.com/v1/directions?origin=" + originLon + "," + originLat +
                 "&destination=" + destinationLon + "," + destinationLat +
                 "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false&alternatives=false&road_details=false";
@@ -39,45 +38,34 @@ public class KakaoMobilityAPIService extends APIService {
 
                 if (summaryMap != null) {
                     Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(미터)
-                    Integer duration = (Integer) summaryMap.get("duration"); // 목적지까지 소요 시간(초)
+                    Integer duration = (Integer) summaryMap.get("duration"); // 예상 이동 소요 시간(초)
+                    String convertedDuration = calculate(duration);
 
-                    // 거리, 도착 예정 시간 계산 후 저장
-                    calculate(distance, duration);
+                    distanceAndDuration.put("distance", String.valueOf(distance));
+                    distanceAndDuration.put("duration", convertedDuration);
 
-                    return map;
+                    return distanceAndDuration;
                 }
             }
         } catch (RuntimeException | IOException e) {
             logger.error("getDistanceAndETA() Error", e);
         }
 
-        return Map.of("distance", "0", "ETA", "0");
+        return Map.of("distance", "0", "duration", "0분");
     }
 
-    // 거리, 도착 예정 시간 계산
-    private void calculate(Double distance, Integer duration) {
-        // 거리를 km 단위로 변환하고 소수점 첫째 자리까지 반올림
-        distance = Math.round((distance / 1000.0) * 10.0) / 10.0;
+    // 예상 이동 소요 시간 (초) -> 예상 이동 소요 시간 ("*시간 *분") 변환
+    private String calculate(Integer duration) {
+        int tmp = duration / 60; // 초 -> 분
+        int hour, minute = 0;
 
-        LocalDateTime now = LocalDateTime.now();
-        int minute = duration / 60;
-        int arriveHour = now.getHour();
-        int arriveMinute = now.getMinute() + minute;
+        hour = tmp / 60;
+        minute = tmp % 60;
 
-        if (arriveMinute >= 60) {
-            arriveHour += arriveMinute / 60;
-            arriveMinute %= 60;
+        if (hour == 0) {
+            return minute + "분";
+        } else {
+            return hour + "시간 " + minute + "분";
         }
-
-        if (arriveHour >= 24) {
-            arriveHour %= 24;
-        }
-
-        String ETA = arriveHour >= 12 ?
-                String.format("오후 %d시 %d분", arriveHour == 12 ? 12 : arriveHour - 12, arriveMinute) :
-                String.format("오전 %d시 %d분", arriveHour, arriveMinute);
-
-        map.put("distance", String.valueOf(distance));
-        map.put("ETA", ETA);
     }
 }

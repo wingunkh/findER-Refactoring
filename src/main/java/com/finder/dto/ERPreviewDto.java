@@ -22,5 +22,5 @@ public class ERPreviewDto {
 
     private Double distance; // 거리
 
-    private String ETA; // 도착 예정 시간
+    private String duration; // 예상 이동 소요 시간
 }
