@@ -37,11 +37,12 @@ public class KakaoMobilityAPIService extends APIService {
                 HashMap<String, Object> summaryMap = (HashMap<String, Object>) routesMap.get("summary"); // 경로 요약 정보
 
                 if (summaryMap != null) {
-                    Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(미터)
+                    Double distance = ((Integer) summaryMap.get("distance")).doubleValue(); // 거리(m)
+                    Double convertedDistance = convertDistance(distance); // 거리(km)
                     Integer duration = (Integer) summaryMap.get("duration"); // 예상 이동 소요 시간(초)
-                    String convertedDuration = calculate(duration);
+                    String convertedDuration = convertDuration(duration); // 예상 이동 소요 시간 ("*시간 *분")
 
-                    distanceAndDuration.put("distance", String.valueOf(distance));
+                    distanceAndDuration.put("distance", String.valueOf(convertedDistance));
                     distanceAndDuration.put("duration", convertedDuration);
 
                     return distanceAndDuration;
@@ -54,8 +55,13 @@ public class KakaoMobilityAPIService extends APIService {
         return Map.of("distance", "0", "duration", "0분");
     }
 
+    // 거리(m) -> 거리(km) 변환 (소수점 첫째 자리까지 반올림)
+    private Double convertDistance(Double distance) {
+        return Math.round((distance / 1000.0) * 10.0) / 10.0;
+    }
+
     // 예상 이동 소요 시간 (초) -> 예상 이동 소요 시간 ("*시간 *분") 변환
-    private String calculate(Integer duration) {
+    private String convertDuration(Integer duration) {
         int tmp = duration / 60; // 초 -> 분
         int hour, minute = 0;
 
