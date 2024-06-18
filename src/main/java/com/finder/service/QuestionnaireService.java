@@ -52,14 +52,14 @@ public class QuestionnaireService {
 
         // 자신의 문진표 추가
         questionnaireRepository.findById(phoneNumber)
-                .ifPresent(myQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(myQuestionnaire)));
+                .ifPresent(myQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(myQuestionnaire, Boolean.FALSE)));
 
         // 연동된 상대방의 문진표 추가
         List<Link> linkList = linkRepository.findAllByAccount1PhoneNumber(phoneNumber);
 
         for (Link link : linkList) {
             questionnaireRepository.findById(link.getAccount2().getPhoneNumber())
-                    .ifPresent(linkedQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(linkedQuestionnaire)));
+                    .ifPresent(linkedQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(linkedQuestionnaire, Boolean.TRUE)));
         }
 
         return questionnaireDtoList;

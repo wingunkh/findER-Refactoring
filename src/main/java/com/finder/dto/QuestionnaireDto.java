@@ -33,7 +33,9 @@ public class QuestionnaireDto {
 
     private String etc; // 기타 특이사항
 
-    public static QuestionnaireDto convertToQuestionnaireDto(Questionnaire questionnaire) {
+    private Boolean isLinked; // 연동 여부
+
+    public static QuestionnaireDto convertToQuestionnaireDto(Questionnaire questionnaire, Boolean aBoolean) {
         return QuestionnaireDto.builder()
                 .phoneNumber(questionnaire.getAccount().getPhoneNumber())
                 .name(questionnaire.getName())
@@ -48,6 +50,7 @@ public class QuestionnaireDto {
                 .drink(questionnaire.getDrink())
                 .smoke(questionnaire.getSmoke())
                 .etc(questionnaire.getEtc())
+                .isLinked(aBoolean)
                 .build();
     }
 }
