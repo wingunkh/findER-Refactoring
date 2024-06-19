@@ -21,21 +21,13 @@ public class ERController {
     // 응급실 프리뷰
     @GetMapping("/preview/{hpID}")
     public ResponseEntity<Object> findERPreview(@PathVariable String hpID, @RequestParam Double lat, @RequestParam Double lon) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(erService.findERPreview(hpID, lat, lon));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(erService.findERPreview(hpID, lat, lon));
     }
 
 
     // 응급실 상세정보 조회
     @GetMapping("/detailView/{hpID}")
     public ResponseEntity<Object> findERDetail(@PathVariable String hpID, @RequestParam Double lat, @RequestParam Double lon) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(erService.findERDetail(hpID, lat, lon));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(erService.findERDetail(hpID, lat, lon));
     }
 }

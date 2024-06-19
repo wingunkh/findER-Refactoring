@@ -7,6 +7,7 @@ import com.finder.dto.QuestionnaireDto;
 import com.finder.repository.AccountRepository;
 import com.finder.repository.LinkRepository;
 import com.finder.repository.QuestionnaireRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class QuestionnaireService {
     @Transactional
     public void writeQuestionnaire(QuestionnaireDto questionnaireDto) {
         Account account = accountRepository.findById(questionnaireDto.getPhoneNumber())
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
         Questionnaire questionnaire = Questionnaire.builder()
                 .phoneNumber(questionnaireDto.getPhoneNumber())
@@ -68,7 +69,7 @@ public class QuestionnaireService {
     @Transactional
     public void updateQuestionnaire(QuestionnaireDto questionnaireDto) {
         Questionnaire questionnaire = questionnaireRepository.findById(questionnaireDto.getPhoneNumber())
-                .orElseThrow(() -> new IllegalArgumentException("문진표가 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("문진표가 존재하지 않습니다."));
 
         questionnaire.setName(questionnaireDto.getName());
         questionnaire.setAge(questionnaireDto.getAge());
@@ -91,7 +92,7 @@ public class QuestionnaireService {
     @Transactional
     public void deleteQuestionnaire(String phoneNumber) {
         Questionnaire questionnaire = questionnaireRepository.findById(phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("문진표가 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("문진표가 존재하지 않습니다."));
 
         questionnaireRepository.delete(questionnaire);
     }

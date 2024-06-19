@@ -5,7 +5,6 @@ import com.finder.repository.BedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,12 +18,12 @@ public class BedService {
         Bed bed = bedRepository.findByHpID(hpID);
         Integer bedCount = bed.getCount();
         String bedTime = bed.getTime();
-        Map<String, Object> bedCountAndBedTime = new HashMap<>();
 
         if (bedCount == null || bedCount < 0) {
             bedCount = 0;
         }
 
+        Map<String, Object> bedCountAndBedTime = new HashMap<>();
         bedCountAndBedTime.put("bedCount", bedCount);
         bedCountAndBedTime.put("bedTime", bedTime);
 

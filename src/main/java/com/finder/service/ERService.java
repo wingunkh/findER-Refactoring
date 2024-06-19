@@ -6,6 +6,7 @@ import com.finder.dto.ERDetailViewDto;
 import com.finder.dto.ERPreviewDto;
 import com.finder.dto.MarkerResponseDto;
 import com.finder.repository.ERRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class ERService {
     @Transactional(readOnly = true)
     public ERPreviewDto findERPreview(String hpID, Double lat, Double lon) {
         ER er = erRepository.findById(hpID)
-                .orElseThrow(() -> new IllegalArgumentException("응급실이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("응급실이 존재하지 않습니다."));
 
         // 병상 수, 병상 갱신 시간 조회
         Map<String, Object> bedInfo = bedService.getBedCountAndBedTime(hpID);
@@ -56,7 +57,7 @@ public class ERService {
     @Transactional(readOnly = true)
     public ERDetailViewDto findERDetail(String hpID, Double lat, Double lon) {
         ER er = erRepository.findById(hpID)
-                .orElseThrow(() -> new IllegalArgumentException("응급실이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("응급실이 존재하지 않습니다."));
 
         // 병상 수, 병상 갱신 시간 조회
         Map<String, Object> bedInfo = bedService.getBedCountAndBedTime(hpID);

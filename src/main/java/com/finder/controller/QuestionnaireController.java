@@ -16,13 +16,9 @@ public class QuestionnaireController {
     // 문진표 작성
     @PostMapping
     public ResponseEntity<Object> writeQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto) {
-        try {
-            questionnaireService.writeQuestionnaire(questionnaireDto);
+        questionnaireService.writeQuestionnaire(questionnaireDto);
 
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 접근 가능한 문진표 조회
@@ -34,22 +30,16 @@ public class QuestionnaireController {
     // 문진표 수정
     @PatchMapping
     public ResponseEntity<Object> updateQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto) {
-        try {
-            questionnaireService.updateQuestionnaire(questionnaireDto);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        questionnaireService.updateQuestionnaire(questionnaireDto);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 문진표 삭제
     @DeleteMapping("/{phoneNumber}")
     public ResponseEntity<Object> deleteQuestionnaire(@PathVariable String phoneNumber) {
-        try {
-            questionnaireService.deleteQuestionnaire(phoneNumber);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        questionnaireService.deleteQuestionnaire(phoneNumber);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

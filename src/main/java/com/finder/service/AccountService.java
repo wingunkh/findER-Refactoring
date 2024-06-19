@@ -8,6 +8,7 @@ import com.finder.dto.UnlinkRequestDto;
 import com.finder.repository.AccountRepository;
 import com.finder.repository.LinkRepository;
 import com.finder.util.SHAUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -37,20 +38,20 @@ public class AccountService {
     @Transactional(readOnly = true)
     public void login(AccountRequestDto accountRequestDto) {
         Account account = accountRepository.findById(accountRequestDto.phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("로그인에 실패하였습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("로그인에 실패하였습니다."));
 
         String salt = account.getSalt();
         String encryptedRrn = SHAUtil.encryptWithSalt(accountRequestDto.rrn, salt);
 
         if (!encryptedRrn.equals(account.getRrn())) {
-            throw new IllegalArgumentException("로그인에 실패하였습니다.");
+            throw new EntityNotFoundException("로그인에 실패하였습니다.");
         }
     }
 
     @Transactional(readOnly = true)
     public String findSerialNumber(String phoneNumber) {
         Account account = accountRepository.findById(phoneNumber)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
         return account.getSerialNumber();
     }
@@ -58,11 +59,11 @@ public class AccountService {
     @Transactional
     public void link(LinkRequestDto linkRequestDto) {
         Account account1 = accountRepository.findById(linkRequestDto.getPhoneNumber())
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
         Account account2 = accountRepository.findBySerialNumber(linkRequestDto.getLinkedSerialNumber());
 
         if (Objects.isNull(account2)) {
-            throw new IllegalArgumentException("유효하지 않은 일련번호입니다.");
+            throw new EntityNotFoundException("유효하지 않은 일련번호입니다.");
         }
 
         Link existingLink = linkRepository.findByAccount1PhoneNumberAndAccount2PhoneNumber(account1.getPhoneNumber(), account2.getPhoneNumber());
@@ -88,9 +89,9 @@ public class AccountService {
     @Transactional
     public void unlink(UnlinkRequestDto unlinkRequestDto) {
         Account account1 = accountRepository.findById(unlinkRequestDto.getPhoneNumber1())
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
         Account account2 = accountRepository.findById(unlinkRequestDto.getPhoneNumber2())
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
         linkRepository.deleteByAccount1PhoneNumberAndAccount2PhoneNumber(account1.getPhoneNumber(), account2.getPhoneNumber());
         linkRepository.deleteByAccount1PhoneNumberAndAccount2PhoneNumber(account2.getPhoneNumber(), account1.getPhoneNumber());
