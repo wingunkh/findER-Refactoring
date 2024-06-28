@@ -1,143 +1,99 @@
-<h1 align="center">🚑<strong> findER </strong>🚑</h1>
+<h1 align="center">🚑<strong> findER - Refactoring </strong>🚑</h1>
 
 <div align="center">
   <strong>2023년 제17회 공개 SW 개발자대회</strong>
   <br><br>
-  <em>실시간 응급실 정보 제공 서비스 애플리케이션, findER</em>
+  <em>실시간 응급실 정보 제공 애플리케이션, findER(Emergency Room)</em>
   <br><br>
-  <em>written by gretea5 & wingunkh</em>
+  <em>written by wingunkh & gretea5</em>
 </div>
 
 <div align="center">
-    <h3>
+  <h3>
+    <!--
     <a href="https://malalove.notion.site/API-2f5e86d852ca4f73b2e66c21b8a31e3d?pvs=4">
       📜 REST API 명세서
     </a>
     <span> | </span>
-    <a href="https://github.com/malalove/findER-frontend">
+    -->
+    <a href="https://github.com/gretea5/findER">
       🖼️ Frontend
-    </a>
-    <span> | </span>
-    <a href="https://github.com/malalove/findER-backend">
-      💽 Backend
-    </a>
-    <span> | </span>
-    <a href="https://github.com/malalove/findER-tracker">
-      🏭 Tracker
     </a>
   </h3>
 </div>
 
-## 🔖 목차
-- 개발 배경 및 목적
-- 주요 기능
-- 기술 스택
-- 시스템 구조도
-- 팀원 및 담당 파트
-- 시연 영상
+<br>
 
-## 📍 개발 배경 및 목적
-'응급실 뺑뺑이'란 응급 환자가 이송 병원을 정하지 못해 다른 병원에 재이송되는 현상을 의미합니다. <br><br>
-이러한 현상으로 인해 환자가 사망에 이르는 사회적 문제가 나날이 대두되고 있습니다. <br><br>
-저희 팀은 '응급실에 대한 정보 부족'이 해결될 수 있다면 이러한 문제가 줄어들 것으로 판단하여 <br>
-실시간 응급실 정보 제공 서비스 애플리케이션을 개발하게 되었습니다. <br><br>
-애플리케이션의 이름은 응급실(Emergency Room)을 찾는(find) 매개체라는 의미에서 ‘findER’로 선정하였습니다. <br><br>
-해당 애플리케이션을 사용하는 사용자는 응급 상황 발생 시 자신의 위치를 기준으로 가까운 순서대로 <br>
-응급실의 위치, 예상 도착 시간, 최적 경로 등을 확인할 수 있습니다. <br><br>
-또한 각 응급실의 잔여 병상 수를 실시간으로 확인 가능함과 동시에 현재 시각으로부터 2시간 동안의<br>
-병상 이용 가능 시간 비율 및 병상 수 변동 추이 그래프를 제공하여 사용자가 최적의 응급실을 선택하는 데 있어 도움을 줄 수 있습니다.
+## 📑 목차
+- ✍🏻 **프로젝트 개요**
+- ⭐ **주요 기능**
+- 📚 **기술 스택**
+- 🔗 **API 문서**
+- 🗺️ **시스템 구조도**
+- 👩‍👩‍👧‍👦 **팀원 및 담당 파트**
+- 🛠️ **리팩터링**
 
-## 🎯 주요 기능
-> ### 응급실 정보 제공 (위치, 전화번호 外 CT & MRI 촬영 가능 여부 등)
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325"
-    height="720"
-    src="https://github-production-user-asset-6210df.s3.amazonaws.com/120379834/281963820-c3d78076-d0bc-49bb-8d50-1fdbe855fb8f.png">
-  <br><br>
-</details>
+<br>
 
-> ### 응급실 잔여 병상 수 실시간 제공 (1분 간격 갱신)
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325" 
-    height="720"
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/e685a776-cbbc-4e65-8f90-36dfc40df6bc">
-  <br><br>
-</details>
+## ✍🏻 프로젝트 개요
+응급실 병상이 없어서 환자가 떠돌다가 숨지는, 이른바 **'응급실 뺑뺑이'** 현상이 사회적 이슈로 부각되고 있습니다.
+<br>
+이에 저희 팀은 이러한 사회적 문제를 해결하는 데 일조하고자 **실시간 잔여 병상 수를 포함한 다양한 응급실 관련 정보를 제공하는 애플리케이션**을 개발하였습니다.
+<br>
+<br>
+📰 [<ins>'응급실 뺑뺑이' 잇단 사망‥왜 반복되나</ins> (MBC 뉴스)](https://imnews.imbc.com/replay/2023/nwtoday/article/6488902_36207.html)
 
-> ### 카카오 맵 API를 통한 사용자 현재 위치 기준 가까운 응급실 목록 및 최적 경로 제공
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325" 
-    height="720" 
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/633431e6-621b-4ddf-acb0-aa9e47d6e7a8">
-  <br><br>
-</details>
+<br>
 
+## ⭐ 주요 기능
 
-> ### 카카오 모빌리티 API를 통한 응급실 예상 도착 시간 및 이동 거리 제공
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325" 
-    height="720" 
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/6a974298-75fa-4514-a69e-029b8fe2fff8">
-  <br><br>
-</details>
+### 응급실 위치 확인 기능
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/f3221479-39f3-403d-83d1-4a1067896c7b">
 
-> ### 최근 2시간 동안의 병상 이용 가능 시간 비율 그래프 제공
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325" 
-    height="720" 
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/ce09642c-0746-4329-8d83-3f0f4cb53439">
-  <br><br>
-</details>
+Kakao Map API 지도에서 응급실 위치를 확인할 수 있습니다. <br>
+또한, Kakao Local API를 통해 검색 기능을 제공합니다.
 
-> ### 최근 2시간 동안의 병상 수 변동 추이 그래프 제공 (15분 간격)
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325" 
-    height="720" 
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/229ba0a3-3528-48e4-a853-6365156849df">
-  <br><br>
-</details>
+<br>
 
-> ### 사용자 문진표 작성 기능 제공
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325" 
-    height="720" 
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/c9653656-5634-42e9-91b7-99d5032d7f6e">
-  <br><br>
-</details>
+### 응급실 프리뷰 기능
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/2dc5d9e4-8cd8-429a-ae2e-642125e28ec3">
 
-> ### 사용자 간 문진표 연동을 통한 문진표 상호 동기화 기능 제공
-<details>
-  <summary><b>화면 보기</b></summary>
-  <br>
-  <img 
-    width="325"
-    height="720"
-    src="https://github.com/gretea5/findER-frontend/assets/120379834/e76a8915-4b0a-4197-80ae-1c578dd3c059">
-  <br><br>
-</details>
+국립중앙의료원 API를 통해 실시간 응급실 잔여 병상 수를 제공합니다. (1분 간격 갱신) <br>
+또한, Kakao Mobility API를 통해 이동 거리와 예상 이동 소요 시간을 제공합니다.
 
-## 📌 기술 스택
+<br>
+
+### 응급실 상세보기 기능
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/f58e2489-443a-4c8f-80a5-3679bbe6f573">
+
+구급차, CT, MRI 가용 여부와 진료 과목 등 프리뷰에서 제공하지 않는 응급실 정보를 추가적으로 제공합니다.
+
+<br>
+
+### 길 찾기 기능
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/3ed94866-fc5a-47f6-a54e-2d51a02bd721">
+
+응급실 상세보기에서 버튼을 클릭해 카카오 맵 길 찾기 기능을 사용할 수 있습니다.
+
+<br>
+
+### 문진표 CRUD 기능
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/49c91fee-2cd2-4d5d-b10b-5bd709c8fa30">
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/2ff6ccdc-20e9-40e2-b6ba-93887e51a3e4">
+
+응급 상황에 유용하게 사용될 수 있도록 문진표 관련 기능을 제공합니다.
+
+<br>
+
+### 사용자 간 문진표 연동 기능
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/c192b75d-4d4a-4cc7-8dd9-69086d3272d1">
+<img width="300" height="600" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/792c881d-811f-4313-b36e-e8b4c594ee9a">
+
+다른 사용자의 시리얼 번호를 통해 연동 관계를 설정하고, 문진표를 공유할 수 있습니다.
+
+<br>
+
+## 📚 기술 스택
 <div>
     <table>
         <tr>
@@ -145,18 +101,17 @@
                 Language
             </td>
             <td colspan="4">
-                <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=Dart&logoColor=white"> 
+                <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white"> 
                 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=openjdk&logoColor=white">
             </td>
         </tr>
         <tr>
             <td colspan="2" align="center">
-                Library & Framework
+                Framework
             </td>
             <td colspan="4">
-                <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=Flutter&logoColor=white">
-                <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-                <img src="https://img.shields.io/badge/spring security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">
+                <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+                <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
             </td>
         </tr>
         <tr>
@@ -165,8 +120,9 @@
             </td>
             <td colspan="4">
                 <img src="https://img.shields.io/badge/DATA.go.kr-00529B?style=for-the-badge&logo=D&logoColor=white"> 
-                <img src="https://img.shields.io/badge/Kakao Map Api-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"> 
-                <img src="https://img.shields.io/badge/Kakao Mobility-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"> 
+                <img src="https://img.shields.io/badge/Kakao Map-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"> 
+                <img src="https://img.shields.io/badge/Kakao Mobility-FFCD00?style=for-the-badge&logo=kakao&logoColor=black">
+                <img src="https://img.shields.io/badge/Kakao Local-FFCD00?style=for-the-badge&logo=kakao&logoColor=black"> 
             </td>
         </tr>
         <tr>
@@ -191,8 +147,8 @@
                 Tool
             </td>
             <td colspan="4">
-                <img src="https://img.shields.io/badge/intellij idea-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
-                <img src="https://img.shields.io/badge/visual studio code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white">
+                <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=for-the-badge&logo=androidstudio&logoColor=white">
+                <img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
             </td>
         </tr>
         <tr>
@@ -207,40 +163,54 @@
     </table>
 </div>
 
-## 🖻 시스템 구조도
-<img width="895" alt="image" src="https://github.com/gretea5/findER-frontend/assets/120379834/f94a9594-c195-48fc-bfc4-a8fd02e64f2d">
+<br>
 
-> 백엔드 애플리케이션 : 모바일 애플리케이션의 백엔드 애플리케이션 <br>
-> 트래커 애플리케이션 : 1분 간격으로 전국 400여 개의 응급실의 실시간 병상 수를 갱신하기 위한 별도의 애플리케이션
+## 🔗 API 문서
+
+🔗[<ins>Notion</ins>](https://finder-api.notion.site/9964c0217c97499ab30a76baa1f660e8?v=fb3bc95f4e53471ea71213b282109a83&pvs=4)
+
+<br>
+
+## 🗺️ 시스템 구조도
+
+<img width="600" height="360" src="https://github.com/wingunkh/findER-Refactoring/assets/58140360/8580f70c-7bee-40a5-ae9e-9c0196064ede"> <br>
+
+<br>
 
 ## 👩‍👩‍👧‍👦 팀원 및 담당 파트
-<div sytle="overflow:hidden;">
+
 <table>
-   <tr>
-      <td colspan="2" align="center"><strong>Front-End Developer</strong></td>
-      <td colspan="2" align="center"><strong>Back-End Developer</strong></td>
-   </tr>
+  <tr>
+    <td align="center">Front-End</td>
+    <td align="center">Back-End</td>
+  </tr>
+  
   <tr>
     <td align="center">
-        <a href="https://github.com/gretea5"><img src="https://avatars.githubusercontent.com/u/120379834?v=4" width="150px;" alt="박장훈"/><br/><sub><b>박장훈</b></sub></a>
+        <img src="https://avatars.githubusercontent.com/u/120379834?v=4" width="120px;" alt="박장훈"/>
     </td>
-     <td align="center">
-        <a href="https://github.com/LapinMin"><img src="https://avatars.githubusercontent.com/u/130971355?v=4" width="150px" alt="민건희"/><br/><sub><b>민건희</b></sub></a>
-     </td>
-     <td align="center">
-        <a href="https://github.com/wingunkh"><img src="https://avatars.githubusercontent.com/u/58140360?v=4" width="150px" alt="김현근"/><br/><sub><b>김현근(팀장)</b></sub></a>
-     </td>
-     <td align="center">
-        <a href="https://github.com/fkgnssla"><img src="https://avatars.githubusercontent.com/u/92067099?v=4" width="150px" alt="김형민"/><br/><sub><b>김형민</b></sub></a>
-     </td>
+    <td align="center">
+        <img src="https://avatars.githubusercontent.com/u/58140360?v=4" width="120px" alt="김현근"/>
+    </td>
+  </tr>
+
   <tr>
+    <td align="center">
+      <a href="https://github.com/gretea5">박장훈</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/wingunkh">김현근</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" width="50%">Android Mobile Application 개발 (Kotlin)</td>
+    <td align="center" width="50%">Spring Web Application 개발 (Java)</td>
+  </tr>
 </table>
-</div>
 
-> 박장훈 : Flutter 사용 모바일 애플리케이션 공동 개발 / Kakao Map API 사용 위치 기반 서비스 개발 <br>
-> 민건희 : Flutter 사용 모바일 애플리케이션 공동 개발 <br>
-> 김현근 : Spring Boot 사용 백엔드 애플리케이션 공동 개발 / Spring Boot 사용 트래커 애플리케이션 개발 <br>
-> 김형민 : Spring Boot 사용 백엔드 애플리케이션 공동 개발 / Spring Security 사용 토큰 기반 로그인 체계 확립 <br>
+<br>
 
-## 📽️ 시연 영상
-[시연 영상 바로가기 ✈️](https://youtu.be/m4FCF3DETNg)
+<!-- ## 🛠️ 리팩터링
+blank
+-->
