@@ -20,16 +20,10 @@ public class KakaoMobilityAPIService extends APIService {
 
     // 응급실 거리 & 예상 이동 소요 시간 조회
     public Map<String, String> getDistanceAndDuration(Double originLat, Double originLon, Double destinationLat, Double destinationLon) {
-        String urlString = "https://apis-navi.kakaomobility.com/v1/directions?origin=" + originLon + "," + originLat +
-                "&destination=" + destinationLon + "," + destinationLat +
-                "&waypoints=&priority=RECOMMEND&car_fuel=GASOLINE&car_hipass=false&alternatives=false&road_details=false";
-        String data;
-        JSONObject jsonObject;
-        ObjectMapper mapper = new ObjectMapper();
-
         try {
-            data = sendHttpRequest(urlString, key);
-            jsonObject = mapper.readValue(data, JSONObject.class);
+            String urlString = buildUrlString(originLat, originLon, destinationLat, destinationLon);
+            String httpResponse = sendHttpRequest(urlString, key);
+            JSONObject jsonObject = new ObjectMapper().readValue(httpResponse, JSONObject.class);
             ArrayList<HashMap<String, Object>> routes = (ArrayList<HashMap<String, Object>>) jsonObject.get("routes"); // 경로 정보
 
             if (!routes.isEmpty()) {
@@ -49,10 +43,23 @@ public class KakaoMobilityAPIService extends APIService {
                 }
             }
         } catch (RuntimeException | IOException e) {
-            logger.error("getDistanceAndETA() Error", e);
+            logger.error("getDistanceAndDuration() Error", e);
         }
 
         return Map.of("distance", "0", "duration", "0분");
+    }
+
+    private String buildUrlString(Double originLat, Double originLon, Double destinationLat, Double destinationLon) {
+        String baseUrl = "https://apis-navi.kakaomobility.com/v1/directions";
+        String waypoints = ""; // 경유지
+        String priority = "RECOMMEND"; // 경로 탐색 우선순위 옵션
+        String car_fuel = "GASOLINE"; // 차량 유종 정보
+        String car_hipass = "false"; // 하이패스 장착 여부
+        String alternatives = "false"; // 대안 경로 제공 여부
+        String road_details = "false"; // 상세 도로 정보 제공 여부
+
+        return String.format("%s?origin=%f,%f&destination=%f,%f&waypoints=%s&priority=%s&car_fuel=%s&car_hipass=%s&alternatives=%s&road_details=%s",
+                baseUrl, originLon, originLat, destinationLon, destinationLat, waypoints, priority, car_fuel, car_hipass, alternatives, road_details);
     }
 
     // 거리(m) -> 거리(km) 변환 (소수점 첫째 자리까지 반올림)
@@ -63,10 +70,8 @@ public class KakaoMobilityAPIService extends APIService {
     // 예상 이동 소요 시간 (초) -> 예상 이동 소요 시간 ("*시간 *분") 변환
     private String convertDuration(Integer duration) {
         int tmp = duration / 60; // 초 -> 분
-        int hour, minute = 0;
-
-        hour = tmp / 60;
-        minute = tmp % 60;
+        int hour = tmp / 60;
+        int minute = tmp % 60;
 
         if (hour == 0) {
             return minute + "분";
