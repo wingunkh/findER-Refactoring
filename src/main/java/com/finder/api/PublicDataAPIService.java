@@ -8,8 +8,6 @@ import com.finder.xml.*;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,15 +26,12 @@ import java.util.List;
 public class PublicDataAPIService extends APIService {
     @Value("${api.key}")
     private String key;
-    private final Logger logger = LoggerFactory.getLogger(PublicDataAPIService.class);
-
     private final BedRepository bedRepository;
     private final ERRepository erRepository;
 
     // 응급의료기관 실시간 병상 수 갱신 (1분 간격)
     @Scheduled(cron = "1 * * * * *") // 스케줄링 (매 분 1초)
     public void updateBedCountEveryMinute() {
-        long startTime = System.currentTimeMillis();
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm"));
 
         try {
@@ -54,18 +49,13 @@ public class PublicDataAPIService extends APIService {
             }
 
             bedRepository.saveAll(bedList);
+        } catch (RuntimeException ignored) { // 예외 발생 시 무시
 
-            logger.info(time + " updateBedsCountEveryMinute() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
-        } catch (RuntimeException e) { // 예외 발생 시 무시
-            logger.error("updateBedCountEveryMinute() Error", e);
         }
     }
 
     // 응급의료기관 기본정보 갱신 (최초 실행 시)
     public void updateEmergencyRoomInfo() {
-        long startTime = System.currentTimeMillis();
-        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy/MM/dd HH:mm"));
-
         try {
             String urlString = buildUrlString("getEgytBassInfoInqire");
             List<XmlModel1.Item1> item1List = getBedCount();
@@ -96,11 +86,7 @@ public class PublicDataAPIService extends APIService {
 
                 erRepository.save(er);
             }
-
-            logger.info(time + " updateEmergencyRoomInfo() 함수 소요 시간: {}ms", (System.currentTimeMillis() - startTime));
         } catch (RuntimeException | JAXBException e) { // 예외 발생 시 RuntimeException throw (프로그램 종료)
-            logger.error("updateEmergencyRoomInfo() Error", e);
-
             throw new RuntimeException(e);
         }
     }
@@ -116,12 +102,8 @@ public class PublicDataAPIService extends APIService {
             XmlModel1 xmlModel1 = (XmlModel1) JAXBContext.newInstance(XmlModel1.class).createUnmarshaller().unmarshal(stringReader);
             List<XmlModel1.Item1> item1List = xmlModel1.getBody().getItems().getItem1();
 
-            logger.info("Data 수 : {}", item1List.size());
-
             return item1List;
         } catch (RuntimeException | JAXBException e) { // 예외 발생 시 RuntimeException throw
-            logger.error("getBedCount() Error", e);
-
             throw new RuntimeException(e);
         }
     }

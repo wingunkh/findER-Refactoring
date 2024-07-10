@@ -2,8 +2,6 @@ package com.finder.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -15,7 +13,6 @@ import java.util.Map;
 public class KakaoMobilityAPIService extends APIService {
     @Value("${kakao.key}")
     private String key;
-    private final Logger logger = LoggerFactory.getLogger(KakaoMobilityAPIService.class);
     private final Map<String, String> distanceAndDuration = new HashMap<>();
 
     // 응급실 거리 & 예상 이동 소요 시간 조회
@@ -42,8 +39,8 @@ public class KakaoMobilityAPIService extends APIService {
                     return distanceAndDuration;
                 }
             }
-        } catch (RuntimeException | IOException e) {
-            logger.error("getDistanceAndDuration() Error", e);
+        } catch (RuntimeException | IOException ignored) { // 예외 발생 시 무시
+
         }
 
         return Map.of("distance", "0", "duration", "0분");

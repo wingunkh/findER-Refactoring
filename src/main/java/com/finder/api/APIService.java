@@ -1,7 +1,5 @@
 package com.finder.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,8 +8,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public abstract class APIService {
-    Logger logger = LoggerFactory.getLogger(APIService.class);
-
     protected String sendHttpRequest(String urlString, String key) {
         // URL 연결을 위한 HttpURLConnection 객체 생성
         HttpURLConnection conn = null;
@@ -51,15 +47,13 @@ public abstract class APIService {
             // 읽은 응답 데이터를 문자열로 반환
             return stringBuilder.toString();
         } catch (IOException e) { // 예외 발생 시 RuntimeException throw
-            logger.error("HTTP Request Error", e);
-
             throw new RuntimeException(e);
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (IOException e) {
-                    logger.error("Closing BufferedReader Error", e);
+                } catch (IOException ignored) { // 예외 발생 시 무시
+
                 }
             }
 
