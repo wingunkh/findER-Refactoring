@@ -32,7 +32,7 @@ public class QuestionnaireController {
     public ResponseEntity<Object> updateQuestionnaire(@RequestBody QuestionnaireDto questionnaireDto) {
         questionnaireService.updateQuestionnaire(questionnaireDto);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // 문진표 삭제
@@ -40,6 +40,6 @@ public class QuestionnaireController {
     public ResponseEntity<Object> deleteQuestionnaire(@PathVariable String phoneNumber) {
         questionnaireService.deleteQuestionnaire(phoneNumber);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

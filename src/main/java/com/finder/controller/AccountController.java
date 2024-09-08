@@ -28,7 +28,7 @@ public class AccountController {
     public ResponseEntity<Object> login(@RequestBody AccountRequestDto accountRequestDto) {
         accountService.login(accountRequestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // 시리얼 번호 조회
@@ -50,6 +50,6 @@ public class AccountController {
     public ResponseEntity<Object> unlink(@RequestBody UnlinkRequestDto unlinkRequestDto) {
         accountService.unlink(unlinkRequestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
