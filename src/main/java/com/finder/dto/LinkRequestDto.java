@@ -8,5 +8,5 @@ import lombok.Data;
 public class LinkRequestDto {
     private String phoneNumber; // 휴대전화 번호
 
-    private String linkedSerialNumber; // 연동된 계정의 일련번호
+    private String linkedSerialNumber; // 연결된 계정의 일련번호
 }

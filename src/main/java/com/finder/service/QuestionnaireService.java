@@ -48,14 +48,14 @@ public class QuestionnaireService {
 
     @Transactional(readOnly = true)
     public List<QuestionnaireDto> findAccessibleQuestionnaires(String phoneNumber) {
-        // 접근 가능 문진표 리스트 = 자신의 문진표 + 연동된 상대방의 문진표
+        // 접근 가능 문진표 리스트 = 자신의 문진표 + 연결된 상대방의 문진표
         List<QuestionnaireDto> questionnaireDtoList = new ArrayList<>();
 
         // 자신의 문진표 추가
         questionnaireRepository.findById(phoneNumber)
                 .ifPresent(myQuestionnaire -> questionnaireDtoList.add(QuestionnaireDto.convertToQuestionnaireDto(myQuestionnaire, Boolean.FALSE)));
 
-        // 연동된 상대방의 문진표 추가
+        // 연결된 상대방의 문진표 추가
         List<Link> linkList = linkRepository.findAllByAccount1PhoneNumber(phoneNumber);
 
         for (Link link : linkList) {

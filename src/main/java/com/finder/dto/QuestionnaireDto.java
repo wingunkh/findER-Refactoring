@@ -33,7 +33,7 @@ public class QuestionnaireDto {
 
     private String etc; // 기타 특이사항
 
-    private Boolean isLinked; // 연동 여부
+    private Boolean isLinked; // 연결 여부
 
     public static QuestionnaireDto convertToQuestionnaireDto(Questionnaire questionnaire, Boolean aBoolean) {
         return QuestionnaireDto.builder()

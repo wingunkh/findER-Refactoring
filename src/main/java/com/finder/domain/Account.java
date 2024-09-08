@@ -20,5 +20,5 @@ public class Account {
 
     private String salt; // 솔트값
 
-    private String serialNumber; // 연동을 위한 일련번호
+    private String serialNumber; // 문진표 공유를 위한 일련번호
 }

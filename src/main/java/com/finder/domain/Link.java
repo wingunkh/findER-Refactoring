@@ -16,8 +16,8 @@ public class Link {
     private Long id; // 기본키
 
     @ManyToOne
-    private Account account1; // 연동 계정1
+    private Account account1; // 연결 계정1
 
     @ManyToOne
-    private Account account2; // 연동 계정2
+    private Account account2; // 연결 계정2
 }

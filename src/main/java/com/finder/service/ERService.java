@@ -38,7 +38,7 @@ public class ERService {
 
         // 병상 수, 병상 갱신 시간 조회
         Map<String, Object> bedInfo = bedService.getBedCountAndBedTime(hpID);
-        // 거리, 도착 예정 시간 조회
+        // 거리, 예상 이동 소요 시간 조회
         Map<String, String> distanceAndDuration = kakaoMobilityAPIService.getDistanceAndDuration(lat, lon, er.getLatitude(), er.getLongitude());
 
         return ERPreviewDto.builder()
@@ -61,7 +61,7 @@ public class ERService {
 
         // 병상 수, 병상 갱신 시간 조회
         Map<String, Object> bedInfo = bedService.getBedCountAndBedTime(hpID);
-        // 거리, 도착 예정 시간 조회
+        // 거리, 예상 이동 소요 시간 조회
         Map<String, String> distanceAndDuration = kakaoMobilityAPIService.getDistanceAndDuration(lat, lon, er.getLatitude(), er.getLongitude());
 
         return ERDetailViewDto.builder()
