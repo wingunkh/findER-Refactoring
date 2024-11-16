@@ -3,7 +3,7 @@
 <div align="center">
   <strong>2023년 제17회 공개 SW 개발자대회</strong>
   <br><br>
-  <em>실시간 응급실 정보 제공 모바일 앱, findER(Emergency Room)</em>
+  <em>실시간 응급실 병상 확인 모바일 앱, findER(Emergency Room)</em>
   <br><br>
   <em>written by wingunkh & gretea5</em>
 </div>
